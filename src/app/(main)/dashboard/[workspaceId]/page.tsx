@@ -14,14 +14,11 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 interface SingleWorkSpaceProps {
-  getWorkId: Function;
-  setLoading: Function;
+  getWorkId: (id: string) => void;
+  setLoading: (loading: boolean) => void;
 }
-const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({
-  getWorkId,
-  setLoading,
-  // handleCollabs,
-}) => {
+
+const SingleWorkSpace = ({ getWorkId, setLoading }: SingleWorkSpaceProps) => {
   const { disabled, setDisabled } = useCustomContext();
   const [data, setData] = useState([]);
   const [workDesc, setWorkdesc] = useState("");
@@ -134,7 +131,7 @@ const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({
               <div></div>
             ) : ( */}
             <div
-            style={{backgroundColor:color}}
+              style={{ backgroundColor: color }}
               className={
                 bannerURL == null
                   ? `bg-[${color}] w-full h-full`
