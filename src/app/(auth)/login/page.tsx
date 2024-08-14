@@ -1,42 +1,35 @@
 "use client";
-import { string, z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+// import { string, z } from "zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { loginAction } from "@/lib/serverAction/authAction";
 import { cn } from "@/utils/cn";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-export const loginSchema = z.object({
-  email: z.string().email({ message: "enter valid email" }),
-  password: z.string(),
-});
+// export const loginSchema = z.object({
+//   email: z.string().email({ message: "enter valid email" }),
+//   password: z.string(),
+// });
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  const isLoading = form.formState.isSubmitting;
-  const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = async ({
+  // const form = useForm<z.infer<typeof loginSchema>>({
+  //   resolver: zodResolver(loginSchema),
+  //   mode: "onChange",
+  //   defaultValues: {
+  //     email: "",
+  //     password: "",
+  //   },
+  // });
+  // const isLoading = form.formState.isSubmitting;
+  const onSubmit = async ({
     email,
     password,
+  }: {
+    email: string;
+    password: string;
   }) => {
     console.log("trying");
 
@@ -131,7 +124,7 @@ const LoginPage = () => {
               <Input
                 id="pass"
                 placeholder="******"
-                type="text"
+                type="password"
                 value={pass}
                 onChange={(e) => {
                   setPass(e.target.value);
