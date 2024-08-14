@@ -1,0 +1,1 @@
+ALTER TABLE "folders" ALTER COLUMN "owner" SET DATA TYPE text;
