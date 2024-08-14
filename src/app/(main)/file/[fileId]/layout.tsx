@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import React, { useState } from "react";
 import FilePage from "./page";
 
-const fileLayout = ({ children }: { children: React.ReactNode }) => {
+const FileLayout = ({ children }: { children: React.ReactNode }) => {
   const [workId, setWorkId] = useState("");
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(true);
@@ -34,4 +34,4 @@ const fileLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default fileLayout;
+export default FileLayout;

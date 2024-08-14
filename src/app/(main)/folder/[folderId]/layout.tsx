@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import React, { useState } from "react";
 import FolderDetail from "./page";
 
-const folderLayout = ({ children }: { children: React.ReactNode }) => {
+const FolderLayout = ({ children }: { children: React.ReactNode }) => {
   const [workId, setWorkId] = useState("");
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(true);
@@ -36,4 +36,4 @@ const folderLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default folderLayout;
+export default FolderLayout;
