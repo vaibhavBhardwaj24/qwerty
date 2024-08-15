@@ -15,13 +15,17 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import Popup from "@/components/popup";
+import { User } from "@supabase/supabase-js";
 
 const VerifyOTP = () => {
   const router = useRouter();
   const supabase = createClient();
   const [inputOTP, setInputOTP] = useState(false);
   const [OTP, setOTP] = useState("");
-  const [data, setData] = useState();
+  const [data, setData] = useState<{ user: User | null } | undefined>(
+    undefined
+  );
+
   const [wrongOTP, setWrongOTP] = useState(false);
   useEffect(() => {
     const action = async () => {
@@ -43,7 +47,7 @@ const VerifyOTP = () => {
 
   const verifyMail = async () => {
     console.log(data);
-    if (data.user) {
+    if (data && data.user) {
       const otp = Math.floor(100000 + Math.random() * 900000);
       const OTPstr = String(otp);
       const salt = await bcrypt.genSalt(7);
