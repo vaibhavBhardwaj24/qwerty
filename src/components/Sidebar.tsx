@@ -23,6 +23,31 @@ const Sidebar = () => {
   const supabase = createClient();
   const forward = useRouter();
   const { disabled, setDisabled, workId, setWorkId } = useCustomContext();
+
+  interface Workspace {
+    workspaceId: string;
+    workspaceIcon: string;
+    workspaceTitle: string;
+    workspacePrivate: boolean;
+    ownerId: string;
+    folders: Folder[];
+    collaborators: Collaborator[];
+  }
+
+  interface Folder {
+    folderId: string;
+    folderIcon: string;
+    folderTitle: string;
+  }
+
+  interface Collaborator {
+    collId: string;
+    collaboratorAvatar: string;
+    collaboratorEmail: string;
+    collaboratorId: string;
+    collaboratorsName: string;
+  }
+
   const removeCollab = async (collId: string) => {
     const res = await supabase.from("collaborators").delete().eq("id", collId);
     console.log(res);
@@ -71,7 +96,8 @@ const Sidebar = () => {
     console.log("qwertyui ", res);
     return res;
   };
-  const [workspace, setWorkspace] = useState([]);
+
+  const [workspace, setWorkspace] = useState<Workspace[]>([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [makefolder, setMakeFolder] = useState(false);
   const [folderTitle, setFolderTitle] = useState("");
@@ -82,7 +108,7 @@ const Sidebar = () => {
   const [loading, setLoading] = useState(true);
   const [InviteUser, setInviteUser] = useState(false);
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState<any>([]);
   const [openCollab, setOpenCollab] = useState(false);
   const router = useParams();
 
@@ -221,7 +247,7 @@ const Sidebar = () => {
                     e.stopPropagation();
                   }}
                 >
-                  <InviteUserPage workspaceId={workspaceIdProp} />
+                  <InviteUserPage workspaceId={workId} />
                 </div>
               </div>
             ) : (

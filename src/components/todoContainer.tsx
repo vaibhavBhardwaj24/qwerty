@@ -17,12 +17,12 @@ const TodoContainer = () => {
   const supabase = createClient();
   const [data, setData] = useState([]);
   const router = useParams();
-  const workspaceId = router;
+  const workspaceId = router.workspaceId;
   const { disabled, setDisabled } = useCustomContext();
   const fetchData = async () => {
     setLoading(true);
     const res = await axios.post("/api/todo", {
-      workspaceId: workspaceId.workspaceId,
+      workspaceId: workspaceId,
     });
     console.log(res, "todo TodoContainer");
     setData(res.data.todo);
@@ -38,14 +38,14 @@ const TodoContainer = () => {
     const res = await supabase.from("todo").insert([
       {
         task: todo,
-        workspaceId: workspaceId.workspaceId,
+        workspaceId: workspaceId,
         // dueDate: dueDate,
       },
     ]);
     console.log(res);
     if (res.status == 201) {
       fetchData();
-      setTodo("")
+      setTodo("");
     }
   };
   useEffect(() => {
@@ -155,7 +155,11 @@ const TodoContainer = () => {
                 {data.map((todo: any, index: number) => (
                   <div className="px-4 py-2" key={index}>
                     <Todo
-                      workspaceId={workspaceId.workspaceId}
+                      workspaceId={
+                        Array.isArray(workspaceId)
+                          ? workspaceId[0]
+                          : workspaceId
+                      }
                       todoCompleted={todo.todoCompleted}
                       todoUrgent={todo.todoUrgent}
                       todoTask={todo.todoTask}
@@ -175,7 +179,11 @@ const TodoContainer = () => {
                   .map((todo: any, index: number) => (
                     <div className="px-4 py-2" key={index}>
                       <Todo
-                        workspaceId={workspaceId.workspaceId}
+                        workspaceId={
+                          Array.isArray(workspaceId)
+                            ? workspaceId[0]
+                            : workspaceId
+                        }
                         todoCompleted={todo.todoCompleted}
                         todoUrgent={todo.todoUrgent}
                         todoTask={todo.todoTask}
@@ -195,7 +203,11 @@ const TodoContainer = () => {
                   .map((todo: any, index: number) => (
                     <div className="px-4 py-2" key={index}>
                       <Todo
-                        workspaceId={workspaceId.workspaceId}
+                        workspaceId={
+                          Array.isArray(workspaceId)
+                            ? workspaceId[0]
+                            : workspaceId
+                        }
                         todoCompleted={todo.todoCompleted}
                         todoUrgent={todo.todoUrgent}
                         todoTask={todo.todoTask}
@@ -215,7 +227,11 @@ const TodoContainer = () => {
                   .map((todo: any, index: number) => (
                     <div className="px-4 py-2" key={index}>
                       <Todo
-                        workspaceId={workspaceId.workspaceId}
+                        workspaceId={
+                          Array.isArray(workspaceId)
+                            ? workspaceId[0]
+                            : workspaceId
+                        }
                         todoCompleted={todo.todoCompleted}
                         todoUrgent={todo.todoUrgent}
                         todoTask={todo.todoTask}

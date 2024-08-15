@@ -20,6 +20,11 @@ interface showFileProps {
   folderTitle: string;
   folderIcon: string;
 }
+interface File {
+  filesId: string;
+  filesIcon: string;
+  filesTitle: string;
+}
 const ShowFiles: React.FC<showFileProps> = ({
   folderId,
   workspaceId,
@@ -35,7 +40,7 @@ const ShowFiles: React.FC<showFileProps> = ({
   const [bannerURL, setBannerURL] = useState("");
   const [showFiles, setShowFiles] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState([]);
+  const [result, setResult] = useState<File[]>([]);
   const router = useRouter();
   const fetchData = async () => {
     const data = { folderId };

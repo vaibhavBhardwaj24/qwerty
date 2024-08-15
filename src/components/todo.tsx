@@ -19,6 +19,12 @@ interface todoProps {
   todoUrgent: boolean;
   workspaceId: string;
 }
+
+interface SubTodoData {
+  id: string;
+  subTask: string;
+  isCompleted: boolean;
+}
 const Todo: React.FC<todoProps> = ({
   todoCompleted,
   todoDueDate,
@@ -33,7 +39,7 @@ const Todo: React.FC<todoProps> = ({
   const [isComplete, setIsComplete] = useState(false);
   const [isUrgent, setIsUrgent] = useState(todoUrgent);
   const [todoEdit, setTodoEdit] = useState(todoTask);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<SubTodoData[] | null>([]);
   const [loading, setLoading] = useState(true);
   const [subTodo, setSubTodo] = useState("");
   const [edit, setEdit] = useState(false);
@@ -106,22 +112,32 @@ const Todo: React.FC<todoProps> = ({
     const res = await supabase.from("subTodo").select("*").eq("todoId", todoId);
     setData(res.data);
     console.log(res);
-    const completedTodos = await res.data.reduce(
+    const completedTodos = res.data?.reduce(
       (count: number, todo: any) => (todo.isCompleted ? count + 1 : count),
       0
     );
-    setPercent((completedTodos / res.data?.length) * 100);
-    console.log(completedTodos / res.data?.length);
+    if (completedTodos) {
+      if (res.data?.length) {
+        setPercent((completedTodos / res.data?.length) * 100);
+        console.log(completedTodos / res.data?.length);
+      }
+    }
     setLoading(false);
   };
   const addSubTodo = async () => {
-    const res = await supabase.from("subTodo").insert([
+    const { error } = await supabase.from("subTodo").insert([
       {
         subTask: subTodo,
         workspaceId: workspaceId,
         todoId: todoId,
       },
     ]);
+
+    if (error) {
+      console.error(error);
+    } else {
+      fetchData(); // Refresh the list after adding a new subTodo
+    }
   };
   // useEffect(() => {
   //   setIsComplete(todoCompleted);
@@ -271,7 +287,7 @@ const Todo: React.FC<todoProps> = ({
                   Add
                 </button>
               </div>
-              {data.map((todo, index) => (
+              {data?.map((todo, index) => (
                 <div key={index}>
                   <SubTodo
                     id={todo.id}

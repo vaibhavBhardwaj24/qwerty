@@ -40,11 +40,10 @@ const Navbar = () => {
         const color = stringToHexColor(user.data.user.id);
         setColor(color);
         // setURL(user.data.session.user.user_metadata.)
-        setShort(user.data.user.email?.substring(0, 2));
+        setShort(user.data.user.email?.substring(0, 2) || "");
         if (!user.data.user.user_metadata.email_verified) {
           route.replace("/verify");
           console.log(user.data.user.user_metadata.email_verified);
-          
         }
       }
     };

@@ -21,8 +21,8 @@ export const inviteMail = async ({
 }) => {
   const info = await transporter.sendMail({
     to: email,
-    subject: "Enter your OTP",
-    text: "enter this otp",
+    subject: "You are invited to workspace",
+    text: "click here",
     html: `<h1>you are invited to </h1>
     <a href="http://localhost:3000/invite?workspaceId=${workspaceId}&userId=${userId}">click here</a>
     `,

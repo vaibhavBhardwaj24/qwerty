@@ -1,79 +1,91 @@
 "use client";
-import db from "@/lib/supabase/db";
 import React, { useState } from "react";
-import { users } from "../../../migrations/schema";
-import { eq } from "drizzle-orm";
 import { createClient } from "@/lib/supabase/client";
 import { inviteMail } from "@/lib/nodeMailer/inviteToWorkspace";
-import Collaborators from "../collaborators";
-interface InviteProps {
-  workspaceId: any;
+
+interface User {
+  id: string;
+  email: string;
 }
+
+interface InviteProps {
+  workspaceId: string;
+}
+
 const InviteUserPage: React.FC<InviteProps> = ({ workspaceId }) => {
-  const [email, setEmail] = useState("");
-  const [user, setUser] = useState([]);
-
+  const [email, setEmail] = useState<string>("");
+  const [user, setUser] = useState<User[]>([]);
   const supabase = createClient();
+
   const findUser = async () => {
-    const userFound = await supabase.from("users").select().eq("email", email);
-    // const userFound = await db
-    //   .select()
-    //   .from(users)
-    //   .where(eq(users.email, email));
-    console.log(userFound.data);
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select()
+        .eq("email", email);
 
-    if (userFound == null && userFound == undefined) {
-      return;
-    }
-    if (userFound.data?.length > 0) {
-      console.log("user found");
+      if (error) {
+        console.error("Error finding user:", error);
+        return;
+      }
 
-      setUser(userFound.data);
+      if (data?.length > 0) {
+        console.log("User found");
+        setUser(data);
+      } else {
+        console.log("No user found");
+        setUser([]);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
     }
   };
+
   const InviteUser = async (userId: string, email: string) => {
-    const res = await inviteMail({
-      email: email,
-      userId: userId,
-      workspaceId: workspaceId,
-    });
-    console.log(res);
+    try {
+      const res = await inviteMail({
+        email: email,
+        userId: userId,
+        workspaceId: workspaceId,
+      });
+      console.log(res);
+    } catch (error) {
+      console.error("Error inviting user:", error);
+    }
   };
+
   return (
-    <div className="absolute bg-black border-2 p-5 rounded-md ">
-      Invite User
-      {/* <h1>{workspaceId}</h1> */}
+    <div className="absolute bg-black border-2 p-5 rounded-md">
+      <h1 className="text-white text-lg mb-4">Invite User</h1>
       <div className="flex flex-col">
         <input
           type="text"
-          className="bg-transparent border-2 p-2 rounded-md"
-          placeholder="enter email to invite"
+          className="bg-transparent border-2 p-2 rounded-md mb-2"
+          placeholder="Enter email to invite"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <button
-          onClick={() => {
-            findUser();
-          }}
+          onClick={findUser}
+          className="bg-blue-500 text-white p-2 rounded-md mb-4"
         >
           Search
         </button>
-        {user.map((use, index) => (
-          <div key={index} className="w-full flex justify-between">
-            {/* <Collaborators /> */}
-            {use.email}
-            <button
-            className="hover:bg-white/30 rounded-md p-2"
-              onClick={() => {
-                InviteUser(use.id, use.email);
-              }}
-            >
-              Invite
-            </button>
+        {user.length > 0 && (
+          <div className="space-y-2">
+            {user.map((u, index) => (
+              <div key={index} className="flex justify-between items-center p-2 bg-gray-700 rounded-md">
+                <span className="text-white">{u.email}</span>
+                <button
+                  className="bg-green-500 text-white rounded-md p-2 hover:bg-green-600"
+                  onClick={() => InviteUser(u.id, u.email)}
+                >
+                  Invite
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
