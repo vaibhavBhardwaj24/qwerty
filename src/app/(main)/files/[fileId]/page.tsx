@@ -15,10 +15,25 @@ import Popup from "@/components/popup";
 // const Font = ReactQuill.Quill.import('formats/font');
 // Font.whitelist = ['Cambria', 'lato', 'sans-serif']; // Default sans-serif and your custom fonts
 // ReactQuill.Quill.register(Font, true);
+interface FileDetails {
+  fileData: string;
+  fileIcon: string;
+  fileTitle: string;
+  fileBanner: string;
+  fileWorkSpaceId: string;
+}
+
+interface FetchFileResponse {
+  success: boolean;
+  file: FileDetails[];
+}
+
 const FilePage = () => {
   const router = useParams();
-  const fileId = router.fileId;
-  const [file, setFile] = useState([]);
+  const fileId = Array.isArray(router.fileId)
+    ? router.fileId[0]
+    : router.fileId;
+  // const [file, setFile] = useState([]);
   const [saved, setSaved] = useState("");
   const [saveShow, setSaveShow] = useState(false);
   const [color, setColor] = useState("#444444");
@@ -110,7 +125,7 @@ const FilePage = () => {
     const res = await axios.post("/api/fileDetails", { fileId });
     console.log(res.data);
 
-    setFile(res);
+    // setFile(res);
     setWorkId(res.data.file[0].fileWorkSpaceId);
 
     if (res.data.success) {
@@ -121,7 +136,6 @@ const FilePage = () => {
       setMainLoading(false);
       setLoading(false);
       console.log("load false");
-      
     }
   };
 

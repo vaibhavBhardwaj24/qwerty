@@ -13,7 +13,7 @@ import ReactQuill from "react-quill";
 const FolderDetail = () => {
   const [title, setTitle] = useState("");
   const [icon, setIcon] = useState("");
-  const [bannerURL, setBannerURL] = useState(null);
+  const [bannerURL, setBannerURL] = useState("");
   const [color, setColor] = useState("#444444");
   const [edit, setEdit] = useState(false);
   const [folderDesc, setFolderDesc] = useState("");
@@ -25,8 +25,8 @@ const FolderDetail = () => {
     useCustomContext();
   const supabase = createClient();
   const router = useParams();
-  const folderId = router;
-  console.log(folderId.folderId);
+  const folderId = router.folderId;
+  console.log(folderId);
 
   const updateFolder = async () => {
     const res = await supabase
@@ -37,7 +37,7 @@ const FolderDetail = () => {
         title: title,
         data: folderDesc,
       })
-      .eq("id", folderId.folderId);
+      .eq("id", folderId);
     console.log(res);
     if (res.status == 204) {
       setEdit(false);
@@ -61,7 +61,7 @@ const FolderDetail = () => {
   const fetchData = async () => {
     try {
       const res = await axios.post("/api/folderDetails", {
-        folderId: folderId.folderId,
+        folderId: folderId,
       });
       if (res.data.success) {
         console.log(res);
@@ -98,7 +98,10 @@ const FolderDetail = () => {
   ];
   useEffect(() => {
     fetchData();
-    const color = stringToHexColor(folderId.folderId);
+
+    const color = stringToHexColor(
+      Array.isArray(router.folderId) ? router.folderId[0] : router.folderId
+    );
     setColor(color);
     setLoading(false);
   }, []);
@@ -135,7 +138,7 @@ const FolderDetail = () => {
                 )}
                 {bannerURL != "" ? (
                   <img
-                    src={bannerURL}
+                    src={bannerURL || ""}
                     className="w-full h-full object-cover object-center"
                   />
                 ) : (

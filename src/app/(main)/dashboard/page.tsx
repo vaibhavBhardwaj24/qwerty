@@ -12,11 +12,23 @@ import {
   faLock,
   faLockOpen,
 } from "@fortawesome/free-solid-svg-icons";
+type Workspace = {
+  id: string;
+  title: string;
+  iconId: string;
+  workDesc: string;
+  bannerURL: string;
+};
 
+type CollabWorkspace = {
+  id: string;
+  title: string;
+  iconId: string;
+};
 const DashboardPage = () => {
   const [user, setUser] = useState(null);
-  const [workspace, setWorkspace] = useState([]);
-  const [collabWorkspace, setCollabWorkspace] = useState([]);
+  const [workspace, setWorkspace] = useState<Workspace[]>([]);
+  const [collabWorkspace, setCollabWorkspace] = useState<CollabWorkspace[]>([]);
   const [loading, setLoading] = useState(false);
   const [showWork, setShowWork] = useState(false);
   const [privateMode, setPrivateMode] = useState(false);

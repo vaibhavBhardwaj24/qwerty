@@ -2,18 +2,11 @@ import { createClient } from "@/lib/supabase/client";
 import React, { useState } from "react";
 interface settingProps {
   workspaceId: string;
-  workspaceTitle: string;
-  workspaceIcon: string;
-  workspaceData: string;
   workspaceBanner: string;
   workspacePrivate: boolean;
 }
 const Setting: React.FC<settingProps> = ({
   workspaceId,
-  workspaceTitle,
-  workspaceIcon,
-  workspaceData,
-  //   workspaceCreatedAt,
   workspaceBanner,
   workspacePrivate,
 }) => {

@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
 
       if (
         folderId &&
-        !workspaceEntry.folders.some((folder) => folder.folderId === folderId)
+        !workspaceEntry.folders.some((folder:any) => folder.folderId === folderId)
       ) {
         workspaceEntry.folders.push({
           folderId,
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       if (
         collId &&
         !workspaceEntry.collaborators.some(
-          (collab) => collab.collaboratorId === collaboratorId
+          (collab:any) => collab.collaboratorId === collaboratorId
         )
       ) {
         workspaceEntry.collaborators.push({

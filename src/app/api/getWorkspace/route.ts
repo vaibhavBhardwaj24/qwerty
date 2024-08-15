@@ -160,10 +160,16 @@ export async function POST(req: NextRequest) {
     const aggregatedResult = Array.from(workspaceMap.values()).map(
       (workspace) => ({
         ...workspace,
-        folders: Array.from(workspace.folders).map(JSON.parse),
-        // todos: Array.from(workspace.todos).map(JSON.parse),
-        owner: Array.from(workspace.owner).map(JSON.parse),
-        collaborators: Array.from(workspace.collaborators).map(JSON.parse),
+        folders: Array.from(workspace.folders as string[]).map((folder) =>
+          JSON.parse(folder)
+        ),
+        // todos: Array.from(workspace.todos as string[]).map((todo) => JSON.parse(todo)),
+        owner: Array.from(workspace.owner as string[]).map((owner) =>
+          JSON.parse(owner)
+        ),
+        collaborators: Array.from(workspace.collaborators as string[]).map(
+          (collaborator) => JSON.parse(collaborator)
+        ),
       })
     );
 

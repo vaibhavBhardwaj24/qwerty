@@ -13,13 +13,31 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 // Define the props for the component
+interface Folder {
+  folderId: string;
+  folderTitle: string;
+  folderIcon: string;
+}
+
+interface WorkspaceData {
+  workspaceTitle: string;
+  workspaceIcon: string;
+  workspaceBanner: string;
+  workspaceCreatedAt: string;
+  workspaceData: string;
+  workspacePrivate: boolean;
+  folders?: Folder[];
+  owner?: Folder[];
+  collaborators?: Folder[];
+}
 
 const SingleWorkSpace = () => {
   const { disabled, setDisabled, workId, setWorkId, loading, setLoading } =
     useCustomContext();
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<WorkspaceData | null>(null);
   const [workDesc, setWorkdesc] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -30,8 +48,7 @@ const SingleWorkSpace = () => {
   const [color, setColor] = useState<string>("#654562");
   const [edit, setEdit] = useState<boolean>(false);
 
-  const router = useParams();
-  const workspaceId = router.workspaceId; // Fix: Access workspaceId directly
+  const { workspaceId } = useParams();
   const supabase = createClient();
 
   const fetchData = async () => {
@@ -39,6 +56,8 @@ const SingleWorkSpace = () => {
       const res = await axios.post("/api/getWorkspace", { workspaceId });
       if (res.data.success) {
         const workspace = res.data.workspace[0];
+        console.log(workspace);
+
         setData(workspace);
         setWorkdesc(workspace.workspaceData);
         setTitle(workspace.workspaceTitle);
@@ -105,11 +124,16 @@ const SingleWorkSpace = () => {
   ];
 
   useEffect(() => {
-    fetchData();
-    setWorkId(workspaceId);
-    // getWorkId(workspaceId);
-    setColor(stringToHexColor(workspaceId));
-    setLoading(false);
+    if (workspaceId) {
+      fetchData();
+      setWorkId(Array.isArray(workspaceId) ? workspaceId[0] : workspaceId);
+      setColor(
+        stringToHexColor(
+          Array.isArray(workspaceId) ? workspaceId[0] : workspaceId
+        )
+      );
+      setLoading(false);
+    }
   }, [workspaceId, setWorkId, setLoading]);
 
   return (
@@ -216,7 +240,14 @@ const SingleWorkSpace = () => {
                 className="w-1/3 h-1/4 justify-center items-center flex"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Setting {...data} />
+                <Setting
+                  workspaceId={
+                    Array.isArray(workspaceId) ? workspaceId[0] : workspaceId
+                  }
+                  workspaceBanner={bannerURL || ""}
+                  workspacePrivate={data ? data.workspacePrivate : true}
+                  {...data}
+                />
               </div>
             </div>
           )}
@@ -226,7 +257,7 @@ const SingleWorkSpace = () => {
               <h1 className="text-2xl">Folders</h1>
               <hr />
               <div className="p-2">
-                {data.folders?.map((fold, index) => (
+                {data?.folders?.map((fold, index) => (
                   <Link href={`/folder/${fold.folderId}`} key={index}>
                     <div className="m-2 w-4/5 rounded-md hover:bg-white/25 text-xl p-1 duration-300">
                       {fold.folderIcon} {fold.folderTitle}
