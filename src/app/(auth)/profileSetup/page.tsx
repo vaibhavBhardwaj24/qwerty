@@ -18,7 +18,7 @@ const ProfileSetupPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       const user = await supabase.auth.getSession();
-      setUser(user.data.session?.user.id);
+      setUser(user.data.session?.user.id || "");
     };
     fetchData();
   }, []);
