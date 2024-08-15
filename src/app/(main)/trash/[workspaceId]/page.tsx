@@ -1,22 +1,23 @@
 "use client";
 import Popup from "@/components/popup";
+import { useCustomContext } from "@/lib/providers/customProvider";
 import { createClient } from "@/lib/supabase/client";
 import { faArrowRotateLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-interface TrashProps {
-  getWorkId: Function;
-  setLoading: Function;
-}
-const TrashPage: React.FC<TrashProps> = ({ getWorkId, setLoading }) => {
+
+const TrashPage = () => {
   const params = useParams();
   //   console.log(params);
   const [loading, setLoading2] = useState(true);
   const [trash, setTrash] = useState([]);
   const [popup, setPopup] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const { disabled, setDisabled, workId, setWorkId, setLoading } =
+    useCustomContext();
   const supabase = createClient();
   const restoreFiles = async ({
     fileId,
@@ -134,7 +135,7 @@ const TrashPage: React.FC<TrashProps> = ({ getWorkId, setLoading }) => {
     console.log(res.data.trash[0]);
   };
   useEffect(() => {
-    getWorkId(params.workspaceId);
+    setWorkId(params.workspaceId);
     fetchData();
     setLoading(false);
   }, []);
@@ -190,7 +191,7 @@ const TrashPage: React.FC<TrashProps> = ({ getWorkId, setLoading }) => {
               </div>
             ))}
             <br />
-           <div className="text-2xl"> Files </div>
+            <div className="text-2xl"> Files </div>
             {trash.files.map((file, index: number) => (
               <div key={index} className="flex gap-3">
                 {file.filesTitle}
