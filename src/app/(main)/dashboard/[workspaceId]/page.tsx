@@ -12,7 +12,10 @@ import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 import "react-quill/dist/quill.snow.css";
 
 // Define the props for the component

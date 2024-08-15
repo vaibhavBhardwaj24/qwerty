@@ -7,7 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 import "react-quill/dist/quill.snow.css";
 import "./customQuill.css";
 import Popup from "@/components/popup";

@@ -1,10 +1,12 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 import React, { useEffect, useState } from "react";
-import CreateWorkSpace from "@/components/createWorkSpace";
 import axios from "axios";
 import Link from "next/link";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 import "react-quill/dist/quill.snow.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -238,6 +240,7 @@ const DashboardPage = () => {
         </div>
       )}
     </div>
+    // <>qwertyui</>
   );
 };
 

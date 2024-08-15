@@ -6,7 +6,10 @@ import axios from "axios";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 import "react-quill/dist/quill.snow.css";
 import "./ui/customQuillStyles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
