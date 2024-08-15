@@ -21,6 +21,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useCustomContext } from "@/lib/providers/customProvider";
 import Collaborators from "./collaborators";
+import LoadingPage from "./ui/loading";
 
 const Sidebar = () => {
   const supabase = createClient();
@@ -222,7 +223,9 @@ const Sidebar = () => {
     <div className="border-r-2 border-black h-full w-[25vw] flex flex-col items-center p-4 pt-8 overflow-auto">
       {loading ? (
         <>
-          <h1>loading</h1>
+          <div className="w-full h-full">
+            <LoadingPage />
+          </div>
         </>
       ) : (
         // <h1>loaded</h1>

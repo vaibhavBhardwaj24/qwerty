@@ -1,8 +1,6 @@
 "use client";
 import HTMLRenderer from "@/app/api/deltaReader";
 import Setting from "@/components/setting";
-import ShowFiles from "@/components/showFiles";
-import Todo from "@/components/todo";
 import TodoContainer from "@/components/todoContainer";
 import { useCustomContext } from "@/lib/providers/customProvider";
 import { createClient } from "@/lib/supabase/client";
@@ -17,6 +15,7 @@ import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 import "react-quill/dist/quill.snow.css";
+import LoadingPage from "@/components/ui/loading";
 
 // Define the props for the component
 interface Folder {
@@ -140,9 +139,11 @@ const SingleWorkSpace = () => {
   }, [workspaceId, setWorkId, setLoading]);
 
   return (
-    <div className="pt-8 w-full h-full overflow-auto">
+    <div className="pt-8 w-full h-full bg-dot-white/[0.2]  overflow-auto">
       {mainLoading ? (
-        <div>Loading.....</div>
+        <div className="w-full h-full">
+          <LoadingPage />
+        </div>
       ) : (
         <div className="h-full w-full">
           <div className="h-1/3">

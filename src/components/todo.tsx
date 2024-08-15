@@ -10,6 +10,7 @@ import {
   faPencil,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import LoadingPage from "./ui/loading";
 // import "./check.css";
 interface todoProps {
   todoCompleted: boolean;
@@ -256,7 +257,9 @@ const Todo: React.FC<todoProps> = ({
       {showSubTodo ? (
         <>
           {loading ? (
-            <></>
+            <div className="w-full h-full">
+            <LoadingPage />
+          </div>
           ) : (
             <>
               <div className="w-10/12 mt-1 flex items-center gap-2">

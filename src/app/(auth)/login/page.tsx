@@ -7,23 +7,11 @@ import { loginAction } from "@/lib/serverAction/authAction";
 import { cn } from "@/utils/cn";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-// export const loginSchema = z.object({
-//   email: z.string().email({ message: "enter valid email" }),
-//   password: z.string(),
-// });
-
+import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  // const form = useForm<z.infer<typeof loginSchema>>({
-  //   resolver: zodResolver(loginSchema),
-  //   mode: "onChange",
-  //   defaultValues: {
-  //     email: "",
-  //     password: "",
-  //   },
-  // });
-  // const isLoading = form.formState.isSubmitting;
+  const router = useRouter();
   const onSubmit = async ({
     email,
     password,
@@ -33,7 +21,11 @@ const LoginPage = () => {
   }) => {
     console.log("trying");
 
-    loginAction({ email, password });
+    const res = await loginAction({ email, password });
+    if (res && res.message) {
+      console.log(res);
+      router.push("/dashboard");
+    }
     console.log("submitted");
   };
   const BottomGradient = () => {
@@ -45,61 +37,6 @@ const LoginPage = () => {
     );
   };
   return (
-    // <Form {...form}>
-    //   <form onSubmit={form.handleSubmit(onSubmit)}>
-    //     <FormField
-    //       control={form.control}
-    //       name="email"
-    //       render={({ field }) => (
-    //         <FormItem>
-    //           <FormLabel>Email</FormLabel>
-    //           <FormControl>
-    //             <Input
-    //               placeholder="Email"
-    //               {...field}
-    //               value={email}
-    //               onChange={(e) => {
-    //                 setEmail(e.target.value);
-    //               }}
-    //             />
-    //           </FormControl>
-    //           <FormDescription>enter your registered email</FormDescription>
-    //         </FormItem>
-    //       )}
-    //     />
-    //     <FormField
-    //       control={form.control}
-    //       name="password"
-    //       render={({ field }) => (
-    //         <FormItem>
-    //           <FormLabel>Password</FormLabel>
-    //           <FormControl>
-    //             <Input
-    //               placeholder="Password"
-    //               type="password"
-    //               {...field}
-    //               value={pass}
-    //               onChange={(e) => {
-    //                 setPass(e.target.value);
-    //               }}
-    //             />
-    //           </FormControl>
-    //           <FormDescription>Enter your password</FormDescription>
-    //         </FormItem>
-    //       )}
-    //     />
-
-    //     <Button
-    //       type="submit"
-    //       disabled={isLoading}
-    //       onClick={() => {
-    //         onSubmit({ email: email, password: pass });
-    //       }}
-    //     >
-    //       Submit
-    //     </Button>
-    //   </form>
-    // </Form>
     <div className="bg-dot-white/[0.2] h-[100vh] items-center flex">
       <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black border-[1px] border-white/[0.46]  ">
         <h1 className="text-7xl font-bold bg-clip-text bg-gradient-to-b from-zinc-500 to-gray-800 text-transparent p-6 flex justify-center w-full">

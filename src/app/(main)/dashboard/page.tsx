@@ -55,15 +55,15 @@ const DashboardPage = () => {
     };
     console.log("wertyu");
 
-    // try {
-    //   const res = await axios.post("api/createWorkSpace", data);
-    //   if (res.status === 200) {
-    //     setCreateWork(false);
-    //     fetchData(); // Refresh the workspace list after creation
-    //   }
-    // } catch (error) {
-    //   console.error("Error creating workspace:", error);
-    // }
+    try {
+      const res = await axios.post("api/createWorkSpace", data);
+      if (res.status === 200) {
+        setCreateWork(false);
+        fetchData(); // Refresh the workspace list after creation
+      }
+    } catch (error) {
+      console.error("Error creating workspace:", error);
+    }
   };
 
   const fetchData = async () => {
@@ -94,9 +94,9 @@ const DashboardPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const toolbarOptions = [
     ["bold", "italic", "underline", "strike"],
@@ -120,9 +120,9 @@ const DashboardPage = () => {
   // }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center p-5">
+    <div className="w-full h-full flex bg-dot-white/[0.2]  flex-col justify-center items-center p-5">
       {createWork ? (
-        <div className="flex flex-col w-1/2 h-2/3">
+        <div className="flex flex-col w-1/2 h-2/3 bg-black">
           <div className="flex gap-2 m-2">
             <input
               className="w-[9%] placeholder:text-7xl hover:bg-white/20 duration-200 placeholder:text-white/40 text-4xl flex justify-center bg-transparent rounded-md border-2 border-white/40 focus:outline-none focus:border-white/90"
@@ -177,7 +177,7 @@ const DashboardPage = () => {
           </div>
         </div>
       ) : (
-        <div className="p-6 border-2 rounded-md">
+        <div className="p-6 border-2 rounded-md bg-black">
           <button
             onClick={() => setCreateWork(true)}
             className="text-2xl bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
@@ -186,57 +186,38 @@ const DashboardPage = () => {
           </button>
           <div className="flex gap-2">
             <h2 className="text-2xl mb-2">WorkSpaces</h2>
-            <button
-              onClick={() => {
-                fetchData();
-                setShowWork(true);
-              }}
-            >
-              <FontAwesomeIcon icon={faArrowDown} />
-            </button>
           </div>
-
-          {showWork ? (
-            <div>
-              {loading ? (
-                <>loading....</>
+          <div>
+            <div className="mt-4">
+              {workspace != null ? (
+                workspace.map((work, index) => (
+                  <Link href={`/dashboard/${work.id}`} key={index}>
+                    <div className="text-2xl hover:bg-white/20 rounded-md">
+                      {work.iconId} {work.title}
+                    </div>
+                  </Link>
+                ))
               ) : (
-                <div>
-                  <div className="mt-4">
-                    {workspace != null ? (
-                      workspace.map((work, index) => (
-                        <Link href={`/dashboard/${work.id}`} key={index}>
-                          <div className="text-2xl hover:bg-white/20 rounded-md">
-                            {work.iconId} {work.title}
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <p>No workspaces found.</p>
-                    )}
-                  </div>
-                  <div className="mt-4">
-                    <h2 className="text-2xl mb-2">Collaborated Workspaces</h2>
-                    {collabWorkspace != null ? (
-                      collabWorkspace.map((work, index) => (
-                        <Link href={`/dashboard/${work.id}`} key={index}>
-                          <div className="text-2xl hover:bg-white/20 rounded-md">
-                            {work.iconId}
-                            {"  "}
-                            {work.title}
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <p>No collaborated workspaces found.</p>
-                    )}
-                  </div>
-                </div>
+                <p>No workspaces found.</p>
               )}
             </div>
-          ) : (
-            <></>
-          )}
+            <div className="mt-4">
+              <h2 className="text-2xl mb-2">Collaborated Workspaces</h2>
+              {collabWorkspace != null ? (
+                collabWorkspace.map((work, index) => (
+                  <Link href={`/dashboard/${work.id}`} key={index}>
+                    <div className="text-2xl hover:bg-white/20 rounded-md">
+                      {work.iconId}
+                      {"  "}
+                      {work.title}
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <p>No collaborated workspaces found.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

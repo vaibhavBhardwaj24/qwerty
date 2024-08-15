@@ -81,7 +81,7 @@ const VerifyOTP = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center h-full w-full">
+    <div className="flex justify-center items-center bg-grid-white/[0.2] h-full w-full">
       <div className="flex flex-col text-3xl">
         {wrongOTP ? (
           <>

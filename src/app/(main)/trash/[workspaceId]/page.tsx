@@ -1,5 +1,6 @@
 "use client";
 import Popup from "@/components/popup";
+import LoadingPage from "@/components/ui/loading";
 import { useCustomContext } from "@/lib/providers/customProvider";
 import { createClient } from "@/lib/supabase/client";
 import { faArrowRotateLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +28,9 @@ interface TrashData {
 
 const TrashPage: React.FC = () => {
   const params = useParams();
-  const workspaceId = Array.isArray(params.workspaceId) ? params.workspaceId[0] : params.workspaceId;
+  const workspaceId = Array.isArray(params.workspaceId)
+    ? params.workspaceId[0]
+    : params.workspaceId;
 
   const [loading, setLoading] = useState<boolean>(true);
   const [trash, setTrash] = useState<TrashData>({ folders: [], files: [] });
@@ -37,7 +40,13 @@ const TrashPage: React.FC = () => {
   const { setWorkId, setLoading: setContextLoading } = useCustomContext();
   const supabase = createClient();
 
-  const restoreFiles = async ({ fileId, index }: { fileId: string; index: number }) => {
+  const restoreFiles = async ({
+    fileId,
+    index,
+  }: {
+    fileId: string;
+    index: number;
+  }) => {
     try {
       const { status } = await supabase
         .from("files")
@@ -63,7 +72,13 @@ const TrashPage: React.FC = () => {
     setTimeout(() => setPopup(false), 3500);
   };
 
-  const restoreFolder = async ({ folderId, index }: { folderId: string; index: number }) => {
+  const restoreFolder = async ({
+    folderId,
+    index,
+  }: {
+    folderId: string;
+    index: number;
+  }) => {
     try {
       const { status } = await supabase
         .from("folders")
@@ -89,7 +104,13 @@ const TrashPage: React.FC = () => {
     setTimeout(() => setPopup(false), 3500);
   };
 
-  const deleteFiles = async ({ fileId, index }: { fileId: string; index: number }) => {
+  const deleteFiles = async ({
+    fileId,
+    index,
+  }: {
+    fileId: string;
+    index: number;
+  }) => {
     try {
       const { status } = await supabase.from("files").delete().eq("id", fileId);
 
@@ -112,7 +133,13 @@ const TrashPage: React.FC = () => {
     setTimeout(() => setPopup(false), 3500);
   };
 
-  const deleteFolder = async ({ folderId, index }: { folderId: string; index: number }) => {
+  const deleteFolder = async ({
+    folderId,
+    index,
+  }: {
+    folderId: string;
+    index: number;
+  }) => {
     try {
       const [res1, res2] = await Promise.all([
         supabase.from("folders").delete().eq("id", folderId),
@@ -140,7 +167,9 @@ const TrashPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post<{ trash: TrashData }>("/api/trash", { workspaceId });
+      const response = await axios.post<{ trash: TrashData }>("/api/trash", {
+        workspaceId,
+      });
       setTrash(response.data.trash);
       setLoading(false);
     } catch (error) {
@@ -159,9 +188,11 @@ const TrashPage: React.FC = () => {
   return (
     <>
       {loading ? (
-        <h1>Loading...</h1>
+        <div className="w-full h-full">
+          <LoadingPage />
+        </div>
       ) : (
-        <div className="h-full w-full flex flex-col pt-8 p-4">
+        <div className="h-full w-full bg-grid-white/[0.2]  flex flex-col pt-8 p-4">
           {popup && (
             <Popup error={!success} message={success ? "Success" : "Error"} />
           )}
@@ -176,7 +207,9 @@ const TrashPage: React.FC = () => {
                 </h1>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => restoreFolder({ folderId: fold.folderId, index })}
+                    onClick={() =>
+                      restoreFolder({ folderId: fold.folderId, index })
+                    }
                   >
                     <FontAwesomeIcon
                       icon={faArrowRotateLeft}
@@ -184,7 +217,9 @@ const TrashPage: React.FC = () => {
                     />
                   </button>
                   <button
-                    onClick={() => deleteFolder({ folderId: fold.folderId, index })}
+                    onClick={() =>
+                      deleteFolder({ folderId: fold.folderId, index })
+                    }
                   >
                     <FontAwesomeIcon
                       icon={faTrash}

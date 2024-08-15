@@ -11,8 +11,6 @@ export const loginAction = async (datas: {
 }) => {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const datab = {
     email: datas.email,
     password: datas.password,
@@ -22,6 +20,8 @@ export const loginAction = async (datas: {
 
   if (error) {
     console.log(error);
+  } else {
+    return { message: true, data: data };
   }
 
   console.log(data);

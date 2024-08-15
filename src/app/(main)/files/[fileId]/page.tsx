@@ -14,6 +14,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 import "./customQuill.css";
 import Popup from "@/components/popup";
+import LoadingPage from "@/components/ui/loading";
 
 // const Font = ReactQuill.Quill.import('formats/font');
 // Font.whitelist = ['Cambria', 'lato', 'sans-serif']; // Default sans-serif and your custom fonts
@@ -149,9 +150,11 @@ const FilePage = () => {
   }, []);
 
   return (
-    <div className="pt-8 w-full h-full overflow-auto">
+    <div className="pt-8 bg-dot-white/[0.2]  w-full h-full overflow-auto">
       {loading ? (
-        <>loading..</>
+        <div className="w-full h-full">
+          <LoadingPage />
+        </div>
       ) : (
         <div className="h-full w-full ">
           {saveShow ? (
@@ -235,10 +238,11 @@ const FilePage = () => {
             </div>
           </div>
           <div className="flex items-center flex-col w-full h-full">
-            <div className="h-[100vw] w-[100vh] bg-wh ite/10 flex">
+            <div className="h-[100vw] w-[100vh] bg-black/50 rounded-md flex">
               {disabled ? (
                 <HTMLRenderer htmlString={data} />
               ) : (
+                // <div className="bg-black rounded-md">
                 <ReactQuill
                   value={data}
                   readOnly={disabled}
@@ -247,6 +251,7 @@ const FilePage = () => {
                     setData(content);
                   }}
                 ></ReactQuill>
+                // </div>
               )}
             </div>
           </div>

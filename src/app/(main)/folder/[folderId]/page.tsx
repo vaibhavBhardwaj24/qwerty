@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import LoadingPage from "@/components/ui/loading";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -20,12 +21,15 @@ const FolderDetail = () => {
   const [edit, setEdit] = useState(false);
   const [folderDesc, setFolderDesc] = useState("");
   const [loading, setMainLoading] = useState(true);
+  const [user, setUser] = useState<any>([]);
   const [folder, setFolder] = useState([]);
   const [file, setFile] = useState([]);
-  const [showit, setshowit] = useState(false);
+  const [fileTitle, setFileTitle] = useState("");
+  const [iconId, setIconId] = useState("");
   const { disabled, setDisabled, workId, setWorkId, setLoading } =
     useCustomContext();
   const supabase = createClient();
+
   const router = useParams();
   const folderId = router.folderId;
   console.log(folderId);
@@ -44,6 +48,26 @@ const FolderDetail = () => {
     if (res.status == 204) {
       setEdit(false);
     }
+  };
+  const createFile = async () => {
+    setMainLoading(true);
+    if (!workId || !folderId || !user || !title || !iconId) {
+      console.log("not all fields given");
+      return;
+    }
+    const data = {
+      workspaceId: workId,
+      folderId: folderId,
+      owner: user,
+      title: fileTitle,
+      iconId: iconId,
+    };
+    const res = await axios.post("/api/createFile", data);
+    console.log(res);
+    fetchData();
+    setIconId("");
+    setFileTitle("");
+    setMainLoading(false);
   };
   const stringToHexColor = (str: string) => {
     let hash = 0;
@@ -65,6 +89,8 @@ const FolderDetail = () => {
       const res = await axios.post("/api/folderDetails", {
         folderId: folderId,
       });
+      const user = await supabase.auth.getSession();
+      setUser(user.data.session?.user.id);
       if (res.data.success) {
         console.log(res);
         setFolder(res.data.folders[0]);
@@ -109,9 +135,11 @@ const FolderDetail = () => {
   }, []);
 
   return (
-    <div className="pt-8 w-full h-full overflow-auto">
+    <div className="pt-8 bg-dot-white/[0.2]  w-full h-full overflow-auto">
       {loading ? (
-        <>loading</>
+        <div className="w-full h-full">
+          <LoadingPage />
+        </div>
       ) : (
         <>
           <div className="h-full w-full">
@@ -198,19 +226,6 @@ const FolderDetail = () => {
                     />
                   </button>
                 )}
-
-                {/* {edit ? (
-                  <button
-                    className="rounded-md hover:bg-white/20 text-3xl m-2"
-                    onClick={() => {
-                      updateFolder();
-                    }}
-                  >
-                    Done
-                  </button>
-                ) : (
-                  <></>
-                )} */}
               </div>
             </div>
             {disabled || !edit ? (
@@ -251,6 +266,28 @@ const FolderDetail = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+              <div className="w-1/2 px-6 flex h-fit gap-2">
+                <input
+                  className="w-[9%] placeholder:text-6xl hover:bg-white/20 duration-200 placeholder:text-white/40 text-3xl flex justify-center bg-transparent rounded-md border-2 border-white/40 focus:outline-none focus:border-white/90"
+                  placeholder="+"
+                  maxLength={2}
+                  value={iconId}
+                  onChange={(e) => setIconId(e.target.value)}
+                />
+                <input
+                  className="bg-transparent w-[90%] text-3xl border-b-2 border-white/40 focus:outline-none focus:border-white/90"
+                  type="text"
+                  placeholder="File Title"
+                  value={fileTitle}
+                  onChange={(e) => setFileTitle(e.target.value)}
+                />
+                <button
+                  className="text-2xl w-fit hover:bg-white/15 rounded-lg p-2 duration-200"
+                  onClick={createFile}
+                >
+                  Create
+                </button>
               </div>
             </div>
           </div>
