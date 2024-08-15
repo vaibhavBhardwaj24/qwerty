@@ -11,19 +11,11 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./customQuill.css";
 import Popup from "@/components/popup";
-interface FilePageProps {
-  getWorkId: Function;
-  setSideLoad: Function;
-  // isDisabled: boolean;
-}
+
 // const Font = ReactQuill.Quill.import('formats/font');
 // Font.whitelist = ['Cambria', 'lato', 'sans-serif']; // Default sans-serif and your custom fonts
 // ReactQuill.Quill.register(Font, true);
-const FilePage: React.FC<FilePageProps> = ({
-  getWorkId,
-  setSideLoad,
-  // isDisabled,
-}) => {
+const FilePage = () => {
   const router = useParams();
   const fileId = router.fileId;
   const [file, setFile] = useState([]);
@@ -36,9 +28,10 @@ const FilePage: React.FC<FilePageProps> = ({
   const [title, setTitle] = useState("");
   const [icon, setIcon] = useState("");
   const [bannerURL, setBannerURL] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setMainLoading] = useState(true);
 
-  const { disabled, setDisabled } = useCustomContext();
+  const { disabled, setDisabled, workId, setWorkId, setLoading } =
+    useCustomContext();
   const supabase = createClient();
 
   const sleep = async () => {
@@ -118,16 +111,18 @@ const FilePage: React.FC<FilePageProps> = ({
     console.log(res.data);
 
     setFile(res);
-    getWorkId(res.data.file[0].fileWorkSpaceId);
-    setSideLoad(false);
-    // if (res.data.file[0].fileData) {
-    setData(res.data.file[0].fileData);
-    setIcon(res.data.file[0].fileIcon);
-    setTitle(res.data.file[0].fileTitle);
-    setBannerURL(res.data.file[0].fileBanner);
-    // }
+    setWorkId(res.data.file[0].fileWorkSpaceId);
 
-    setLoading(false);
+    if (res.data.success) {
+      setData(res.data.file[0].fileData);
+      setIcon(res.data.file[0].fileIcon);
+      setTitle(res.data.file[0].fileTitle);
+      setBannerURL(res.data.file[0].fileBanner);
+      setMainLoading(false);
+      setLoading(false);
+      console.log("load false");
+      
+    }
   };
 
   useEffect(() => {
@@ -221,7 +216,7 @@ const FilePage: React.FC<FilePageProps> = ({
                 {/* {autosave ? <>true</> : <>false</>} */}
               </button>
             </div>
-          </div >
+          </div>
           <div className="flex items-center flex-col w-full h-full">
             <div className="h-[100vw] w-[100vh] bg-wh ite/10 flex">
               {disabled ? (

@@ -11,6 +11,10 @@ import {
 // Define the type for the context value
 interface CustomContextType {
   disabled: boolean;
+  workId: string;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  setWorkId: Dispatch<SetStateAction<string>>;
   setDisabled: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -20,9 +24,14 @@ export const CustomContext = createContext<CustomContextType | null>(null);
 // Create the provider component
 export const CustomProvider = ({ children }: { children: ReactNode }) => {
   const [disabled, setDisabled] = useState(true);
+  const [workId, setWorkId] = useState("");
+  const [loading, setLoading] = useState(true);
+  console.log(loading);
 
   return (
-    <CustomContext.Provider value={{ disabled, setDisabled }}>
+    <CustomContext.Provider
+      value={{ workId, setWorkId, disabled, setDisabled, loading, setLoading }}
+    >
       {children}
     </CustomContext.Provider>
   );

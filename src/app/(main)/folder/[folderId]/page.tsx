@@ -9,27 +9,20 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
-interface FolderPageProps {
-  getWorkId: Function;
-  setSideLoad: Function;
-  isDisabled: boolean;
-}
-const FolderDetail: React.FC<FolderPageProps> = ({
-  getWorkId,
-  setSideLoad,
-  isDisabled,
-}) => {
+
+const FolderDetail = () => {
   const [title, setTitle] = useState("");
   const [icon, setIcon] = useState("");
   const [bannerURL, setBannerURL] = useState(null);
   const [color, setColor] = useState("#444444");
   const [edit, setEdit] = useState(false);
   const [folderDesc, setFolderDesc] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setMainLoading] = useState(true);
   const [folder, setFolder] = useState([]);
   const [file, setFile] = useState([]);
   const [showit, setshowit] = useState(false);
-  const { disabled, setDisabled } = useCustomContext();
+  const { disabled, setDisabled, workId, setWorkId, setLoading } =
+    useCustomContext();
   const supabase = createClient();
   const router = useParams();
   const folderId = router;
@@ -77,9 +70,10 @@ const FolderDetail: React.FC<FolderPageProps> = ({
         setTitle(res.data.folders[0].folderTitle);
         setIcon(res.data.folders[0].folderIcon);
         setBannerURL(res.data.folders[0].folderBanner);
-        getWorkId(res.data.folders[0].folderWorkSpaceId);
+        setWorkId(res.data.folders[0].folderWorkSpaceId);
         setFile(res.data.folders[0].files);
-        setSideLoad(false);
+        // setSideLoad(false);
+        setMainLoading(false);
         setLoading(false);
       }
     } catch (error) {

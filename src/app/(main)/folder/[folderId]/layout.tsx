@@ -2,10 +2,11 @@
 import Sidebar from "@/components/Sidebar";
 import React, { useState } from "react";
 import FolderDetail from "./page";
+import { useCustomContext } from "@/lib/providers/customProvider";
 
 const FolderLayout = ({ children }: { children: React.ReactNode }) => {
   const [workId, setWorkId] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useCustomContext();
   const [disabled, setDisabled] = useState(true);
   const handleWorkId = (data: string) => {
     setWorkId(data);
@@ -24,14 +25,10 @@ const FolderLayout = ({ children }: { children: React.ReactNode }) => {
         <>loading...</>
       ) : (
         <>
-          <Sidebar handleDisable={handleDisable} workspaceIdProp={workId} />
+          <Sidebar />
         </>
       )}
-      <FolderDetail
-        getWorkId={handleWorkId}
-        setSideLoad={handleLoading}
-        isDisabled={disabled}
-      />
+      <FolderDetail />
     </main>
   );
 };

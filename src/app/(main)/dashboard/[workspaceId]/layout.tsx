@@ -2,9 +2,10 @@
 import Sidebar from "@/components/Sidebar";
 import React, { useEffect, useState } from "react";
 import SingleWorkSpace from "./page";
+import { useCustomContext } from "@/lib/providers/customProvider";
 const WorkSpaceLayout = ({ children }: { children: React.ReactNode }) => {
   const [workId, setWorkId] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useCustomContext();
   const [disabled, setDisabled] = useState(true);
   const handleWorkId = (data: string) => {
     setWorkId(data);
@@ -28,11 +29,11 @@ const WorkSpaceLayout = ({ children }: { children: React.ReactNode }) => {
         ) : (
           <div className="h-full">
             {/* <h1>{workId}</h1> */}
-            <Sidebar workspaceIdProp={workId} handleDisable={handleDisable} />
+            <Sidebar />
           </div>
         )}
       </div>
-      <SingleWorkSpace getWorkId={handleWorkId} setLoading={handleLoading} />
+      <SingleWorkSpace />
     </main>
   );
 };

@@ -18,17 +18,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useCustomContext } from "@/lib/providers/customProvider";
 import Collaborators from "./collaborators";
-interface sidebarProps {
-  workspaceIdProp: string;
-  handleDisable: Function;
-}
-const Sidebar: React.FC<sidebarProps> = ({
-  workspaceIdProp,
-  handleDisable,
-}) => {
+
+const Sidebar = () => {
   const supabase = createClient();
   const forward = useRouter();
-  const { disabled, setDisabled } = useCustomContext();
+  const { disabled, setDisabled, workId, setWorkId } = useCustomContext();
   const removeCollab = async (collId: string) => {
     const res = await supabase.from("collaborators").delete().eq("id", collId);
     console.log(res);
@@ -65,7 +59,7 @@ const Sidebar: React.FC<sidebarProps> = ({
       title: folderTitle,
       iconId: folderIcon,
       owner: user.data.session?.user.email,
-      workspaceId: workspaceId.workspaceId || workspaceIdProp,
+      workspaceId: workspaceId.workspaceId || workId,
       bannerURL: folderBannerURL,
       data: folderDesc,
     };
@@ -116,7 +110,7 @@ const Sidebar: React.FC<sidebarProps> = ({
       const user = await supabase.auth.getSession();
       setUser(user);
       const data = {
-        workspaceId: workspaceIdProp,
+        workspaceId: workId,
       };
       const res = await axios.post("/api/sidebar", data);
       console.log(res.data);
@@ -140,14 +134,14 @@ const Sidebar: React.FC<sidebarProps> = ({
             if (Object.keys(isCollab).length == 0) {
               forward.push("/notAllowed");
             } else {
-              handleDisable(false);
+              // handleDisable(false);
               setDisabled(false);
               setIsDisabled(false);
               console.log("not disabled");
             }
           } else {
             console.log("owner");
-            handleDisable(false);
+            // handleDisable(false);
             setDisabled(false);
             setIsDisabled(false);
           }
@@ -166,11 +160,11 @@ const Sidebar: React.FC<sidebarProps> = ({
             );
             console.log("iscollabed", isCollab);
             if (Object.keys(isCollab).length != 0) {
-              handleDisable(true);
+              // handleDisable(true);
               setDisabled(true);
               setIsDisabled(true);
             } else {
-              handleDisable(false);
+              // handleDisable(false);
               setDisabled(false);
               setIsDisabled(false);
               console.log("not disabled");
@@ -193,7 +187,7 @@ const Sidebar: React.FC<sidebarProps> = ({
     if (!workspaceId) return; // Ensure workspaceId is available
 
     fetchData();
-  }, [workspaceIdProp]); // Add workspaceId to the dependency array
+  }, [workId]); // Add workspaceId to the dependency array
 
   return (
     <div className="border-r-2 border-black h-full w-[25vw] flex flex-col items-center p-4 pt-8 overflow-auto">
@@ -307,7 +301,7 @@ const Sidebar: React.FC<sidebarProps> = ({
           </div>
           <Link
             className="text-xl hover:bg-zinc-800 p-2 rounded-md w-fit duration-300"
-            href={`/trash/${workspaceIdProp}`}
+            href={`/trash/${workId}`}
           >
             Trash
           </Link>
@@ -458,7 +452,7 @@ const Sidebar: React.FC<sidebarProps> = ({
                   folderId={fold.folderId}
                   folderIcon={fold.folderIcon}
                   folderTitle={fold.folderTitle}
-                  workspaceId={workspaceIdProp}
+                  workspaceId={workId}
                   owner={user.data.session?.user.id}
                   username={user.data.session?.user.email}
                 />

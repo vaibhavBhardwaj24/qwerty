@@ -15,20 +15,17 @@ import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 
 // Define the props for the component
-interface SingleWorkSpaceProps {
-  getWorkId: (id: string) => void;
-  setLoading: (loading: boolean) => void;
-}
 
-const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({ getWorkId, setLoading }) => {
-  const { disabled, setDisabled } = useCustomContext();
+const SingleWorkSpace = () => {
+  const { disabled, setDisabled, workId, setWorkId, loading, setLoading } =
+    useCustomContext();
   const [data, setData] = useState<any[]>([]);
   const [workDesc, setWorkdesc] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [icon, setIcon] = useState<string>("");
   const [bannerURL, setBannerURL] = useState<string | null>(null);
-  const [loading, setMainLoading] = useState<boolean>(true);
+  const [mainLoading, setMainLoading] = useState<boolean>(true);
   const [setting, setSetting] = useState<boolean>(false);
   const [color, setColor] = useState<string>("#654562");
   const [edit, setEdit] = useState<boolean>(false);
@@ -49,7 +46,11 @@ const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({ getWorkId, setLoading
         setBannerURL(workspace.workspaceBanner);
 
         const date = new Date(workspace.workspaceCreatedAt);
-        const formattedDate = `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getFullYear()}`;
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}-${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${date.getFullYear()}`;
         setCreatedAt(formattedDate);
 
         setMainLoading(false);
@@ -64,19 +65,23 @@ const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({ getWorkId, setLoading
     for (let i = 0; i < str.length; i++) {
       hash = (hash << 5) - hash + str.charCodeAt(i);
     }
-    const color = ((hash >> 16) & 0xff).toString(16).padStart(2, "0") +
-                  ((hash >> 8) & 0xff).toString(16).padStart(2, "0") +
-                  (hash & 0xff).toString(16).padStart(2, "0");
+    const color =
+      ((hash >> 16) & 0xff).toString(16).padStart(2, "0") +
+      ((hash >> 8) & 0xff).toString(16).padStart(2, "0") +
+      (hash & 0xff).toString(16).padStart(2, "0");
     return `#${color}`;
   };
 
   const updateWorkspace = async () => {
-    const res = await supabase.from("workspace").update({
-      bannerURL,
-      iconId: icon,
-      title,
-      data: workDesc,
-    }).eq("id", workspaceId);
+    const res = await supabase
+      .from("workspace")
+      .update({
+        bannerURL,
+        iconId: icon,
+        title,
+        data: workDesc,
+      })
+      .eq("id", workspaceId);
 
     if (res.status === 204) {
       setEdit(false);
@@ -101,21 +106,26 @@ const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({ getWorkId, setLoading
 
   useEffect(() => {
     fetchData();
-    getWorkId(workspaceId);
+    setWorkId(workspaceId);
+    // getWorkId(workspaceId);
     setColor(stringToHexColor(workspaceId));
     setLoading(false);
-  }, [workspaceId, getWorkId, setLoading]);
+  }, [workspaceId, setWorkId, setLoading]);
 
   return (
     <div className="pt-8 w-full h-full overflow-auto">
-      {loading ? (
+      {mainLoading ? (
         <div>Loading.....</div>
       ) : (
         <div className="h-full w-full">
           <div className="h-1/3">
             <div
               style={{ backgroundColor: color }}
-              className={bannerURL ? "object-cover overflow-hidden w-full h-full" : `bg-[${color}] w-full h-full`}
+              className={
+                bannerURL
+                  ? "object-cover overflow-hidden w-full h-full"
+                  : `bg-[${color}] w-full h-full`
+              }
             >
               {edit && (
                 <input
@@ -153,13 +163,21 @@ const SingleWorkSpace: React.FC<SingleWorkSpaceProps> = ({ getWorkId, setLoading
             <div className="flex gap-4 mx-2">
               <button onClick={() => setEdit(!edit)}>
                 <FontAwesomeIcon
-                  className={`text-5xl duration-300 ${edit ? "hover:-rotate-12 opacity-100" : "hover:-rotate-12 opacity-60"}`}
+                  className={`text-5xl duration-300 ${
+                    edit
+                      ? "hover:-rotate-12 opacity-100"
+                      : "hover:-rotate-12 opacity-60"
+                  }`}
                   icon={faPencil}
                 />
               </button>
               <button onClick={() => setSetting(!setting)}>
                 <FontAwesomeIcon
-                  className={`text-5xl duration-700 ${setting ? "opacity-100 hover:rotate-180" : "opacity-60 hover:rotate-180"}`}
+                  className={`text-5xl duration-700 ${
+                    setting
+                      ? "opacity-100 hover:rotate-180"
+                      : "opacity-60 hover:rotate-180"
+                  }`}
                   icon={faGear}
                 />
               </button>
