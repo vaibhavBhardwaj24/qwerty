@@ -143,17 +143,6 @@ export async function POST(req: NextRequest) {
           })
         );
       }
-      if (collId) {
-        workspaceEntry.collaborators.add(
-          JSON.stringify({
-            collaboratorId,
-            collaboratorEmail,
-            collaboratorAvatar,
-            collaboratorsName,
-            collId,
-          })
-        );
-      }
     });
 
     // Convert Sets to Arrays and parse the JSON strings back to objects
@@ -167,11 +156,9 @@ export async function POST(req: NextRequest) {
         owner: Array.from(workspace.owner as string[]).map((owner) =>
           JSON.parse(owner)
         ),
-        collaborators: Array.from(workspace.collaborators as string[]).map(
-          (collaborator) => JSON.parse(collaborator)
-        ),
       })
     );
+    console.log(aggregatedResult);
 
     return NextResponse.json({
       success: true,

@@ -16,17 +16,17 @@ export async function POST(req: NextRequest, res: NextResponse) {
         folderDesc: folders.data,
         folderBanner: folders.bannerURL,
         folderWorkSpaceId: folders.workspaceId,
-        filesTitle: files.title,
-        filesIcon: files.iconId,
-        filesOwner: files.owner,
-        filesId: files.id,
-        fileTrash: files.inTrash,
+        // filesTitle: files.title,
+        // filesIcon: files.iconId,
+        // filesOwner: files.owner,
+        // filesId: files.id,
+        // fileTrash: files.inTrash,
       })
       .from(folders)
-      .leftJoin(
-        files,
-        and(eq(files.folderId, folders.id), isNull(files.inTrash))
-      )
+      // .leftJoin(
+      //   files,
+      //   and(eq(files.folderId, folders.id), isNull(files.inTrash))
+      // )
       .where(eq(folders.id, folderId));
     const folderMap = new Map();
 
@@ -39,11 +39,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
         folderDesc,
         folderBanner,
         folderWorkSpaceId,
-        filesId,
-        filesTitle,
-        filesIcon,
-        filesOwner,
-        fileTrash,
+        // filesId,
+        // filesTitle,
+        // filesIcon,
+        // filesOwner,
+        // fileTrash,
       } = row;
 
       if (!folderMap.has(folderId)) {
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
           folderIcon,
           folderDesc,
           folderBanner,
-          files: [],
+          // files: [],
         });
       }
       const folderEntry = folderMap.get(folderId);
@@ -64,22 +64,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
       //   });
       // }
-      if (filesId) {
-        folderEntry.files.push({
-          filesTitle,
-          filesIcon,
-          filesOwner,
-          filesId,
-          fileTrash,
-        });
-      }
+      // if (filesId) {
+      //   folderEntry.files.push({
+      //     filesTitle,
+      //     filesIcon,
+      //     filesOwner,
+      //     filesId,
+      //     fileTrash,
+      //   });
+      // }
     });
 
     const aggregatedResult = Array.from(folderMap.values());
     console.log(aggregatedResult);
     return NextResponse.json({
       success: true,
-      folders: aggregatedResult,
+      folders: result,
     });
   } catch (error) {
     return NextResponse.json(

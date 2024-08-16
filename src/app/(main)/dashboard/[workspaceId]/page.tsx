@@ -4,7 +4,7 @@ import Setting from "@/components/setting";
 import TodoContainer from "@/components/todoContainer";
 import { useCustomContext } from "@/lib/providers/customProvider";
 import { createClient } from "@/lib/supabase/client";
-import { faGear, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faGear, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Link from "next/link";
@@ -33,7 +33,7 @@ interface WorkspaceData {
   workspacePrivate: boolean;
   folders?: Folder[];
   owner?: Folder[];
-  collaborators?: Folder[];
+  // collaborators?: Folder[];
 }
 
 const SingleWorkSpace = () => {
@@ -189,17 +189,7 @@ const SingleWorkSpace = () => {
               />
             </h1>
             <div className="flex gap-4 mx-2">
-              <button onClick={() => setEdit(!edit)}>
-                <FontAwesomeIcon
-                  className={`text-5xl duration-300 ${
-                    edit
-                      ? "hover:-rotate-12 opacity-100"
-                      : "hover:-rotate-12 opacity-60"
-                  }`}
-                  icon={faPencil}
-                />
-              </button>
-              <button onClick={() => setSetting(!setting)}>
+              <button onClick={() => setSetting(!setting)} disabled={disabled}>
                 <FontAwesomeIcon
                   className={`text-5xl duration-700 ${
                     setting
@@ -209,24 +199,35 @@ const SingleWorkSpace = () => {
                   icon={faGear}
                 />
               </button>
-              {edit && (
-                <button
-                  className="rounded-md hover:bg-white/20 text-3xl m-2"
-                  onClick={updateWorkspace}
-                >
-                  Done
+              {!edit ? (
+                <button onClick={() => setEdit(!edit)} disabled={disabled}>
+                  <FontAwesomeIcon
+                    className={`text-5xl duration-300 ${
+                      edit
+                        ? "hover:-rotate-12 opacity-100"
+                        : "hover:-rotate-12 opacity-60"
+                    }`}
+                    icon={faPencil}
+                  />
+                </button>
+              ) : (
+                <button onClick={updateWorkspace}>
+                  <FontAwesomeIcon
+                    className="hover:-rotate-12 duration-300 text-5xl hover:opacity-90  opacity-60"
+                    icon={faCheck}
+                  />
                 </button>
               )}
             </div>
           </div>
           {disabled || !edit ? (
             <>
-              <p>{createdAt}</p>
+              <p className="pl-4 text-xs">Created At- {createdAt}</p>
               <HTMLRenderer htmlString={workDesc} />
             </>
           ) : (
             <div className="p-2">
-              <p>{createdAt}</p>
+              <p className="pl-4 text-xs">Created At- {createdAt}</p>
               <ReactQuill
                 value={workDesc}
                 readOnly={!edit}

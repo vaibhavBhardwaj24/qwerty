@@ -10,7 +10,7 @@ import { CustomProvider } from "@/lib/providers/customProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Notion-clone",
+  title: "Qwerty",
   description: " app",
 };
 

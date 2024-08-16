@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       )
       .where(eq(workspace.id, workspaceId));
 
-    console.log(result);
+    // console.log(result);
     const trashMap = new Map();
 
     result.forEach((row) => {
@@ -59,29 +59,41 @@ export async function POST(req: NextRequest) {
         trashMap.set(workspaceId, {
           workspaceId,
           workspaceTitle,
-          folders: [],
-          files: [],
+          folders: new Set(),
+          files: new Set(),
         });
       }
       const trashEntry = trashMap.get(workspaceId);
 
       if (folderId) {
-        trashEntry.folders.push({
-          folderId,
-          folderTitle,
-          folderIcon,
-        });
+        trashEntry.folders.add(
+          JSON.stringify({
+            folderIcon,
+            folderId,
+            folderTitle,
+          })
+        );
       }
       if (fileId) {
-        trashEntry.files.push({
-          fileId,
-          filesTitle,
-          filesIcon,
-        });
+        trashEntry.files.add(
+          JSON.stringify({
+            fileId,
+            filesIcon,
+            filesTitle,
+          })
+        );
       }
     });
 
-    const aggregatedResult = Array.from(trashMap.values());
+    const aggregatedResult = Array.from(trashMap.values()).map((trash) => ({
+      ...trash,
+      folders: Array.from(trash.folders as string[]).map((folder) =>
+        JSON.parse(folder)
+      ),
+      files: Array.from(trash.files as string[]).map((files) =>
+        JSON.parse(files)
+      ),
+    }));
     console.log(aggregatedResult);
 
     return NextResponse.json({

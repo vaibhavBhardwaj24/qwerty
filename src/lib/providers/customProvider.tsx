@@ -6,38 +6,41 @@ import {
   ReactNode,
   useContext,
   useState,
+  useRef,
+  useEffect,
 } from "react";
 
-// Define the type for the context value
 interface CustomContextType {
   disabled: boolean;
   workId: string;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setWorkId: Dispatch<SetStateAction<string>>;
-  setDisabled: Dispatch<SetStateAction<boolean>>;
+  setDisabled: (value: boolean) => void;
 }
 
-// Create the context with a default value of null
 export const CustomContext = createContext<CustomContextType | null>(null);
 
-// Create the provider component
 export const CustomProvider = ({ children }: { children: ReactNode }) => {
-  const [disabled, setDisabled] = useState(true);
   const [workId, setWorkId] = useState("");
   const [loading, setLoading] = useState(true);
-  console.log(loading);
+  const [disabled, setDisabled] = useState(true);
 
   return (
     <CustomContext.Provider
-      value={{ workId, setWorkId, disabled, setDisabled, loading, setLoading }}
+      value={{
+        workId,
+        setWorkId,
+        disabled,
+        setDisabled,
+        loading,
+        setLoading,
+      }}
     >
       {children}
     </CustomContext.Provider>
   );
 };
-
-// Create a custom hook to use the context
 export const useCustomContext = () => {
   const context = useContext(CustomContext);
   if (!context) {

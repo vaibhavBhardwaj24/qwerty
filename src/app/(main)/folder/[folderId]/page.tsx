@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import LoadingPage from "@/components/ui/loading";
+import Files from "@/components/files";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -23,9 +24,7 @@ const FolderDetail = () => {
   const [loading, setMainLoading] = useState(true);
   const [user, setUser] = useState<any>([]);
   const [folder, setFolder] = useState([]);
-  const [file, setFile] = useState([]);
-  const [fileTitle, setFileTitle] = useState("");
-  const [iconId, setIconId] = useState("");
+
   const { disabled, setDisabled, workId, setWorkId, setLoading } =
     useCustomContext();
   const supabase = createClient();
@@ -49,26 +48,7 @@ const FolderDetail = () => {
       setEdit(false);
     }
   };
-  const createFile = async () => {
-    setMainLoading(true);
-    if (!workId || !folderId || !user || !title || !iconId) {
-      console.log("not all fields given");
-      return;
-    }
-    const data = {
-      workspaceId: workId,
-      folderId: folderId,
-      owner: user,
-      title: fileTitle,
-      iconId: iconId,
-    };
-    const res = await axios.post("/api/createFile", data);
-    console.log(res);
-    fetchData();
-    setIconId("");
-    setFileTitle("");
-    setMainLoading(false);
-  };
+
   const stringToHexColor = (str: string) => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -99,8 +79,7 @@ const FolderDetail = () => {
         setIcon(res.data.folders[0].folderIcon);
         setBannerURL(res.data.folders[0].folderBanner);
         setWorkId(res.data.folders[0].folderWorkSpaceId);
-        setFile(res.data.folders[0].files);
-        // setSideLoad(false);
+        // setFile(res.data.folders[0].files);
         setMainLoading(false);
         setLoading(false);
       }
@@ -246,50 +225,7 @@ const FolderDetail = () => {
                 ></ReactQuill>
               </div>
             )}
-
-            <div className="flex w-full p-2">
-              {/* <div className="border-[1px]"></div> */}
-              <div className="w-1/2 px-6 flex flex-col">
-                <h1 className="text-2xl">Files</h1>
-                <hr />
-                <div className="p-2">
-                  {file.map((file: any, index: number) => (
-                    <div
-                      key={index}
-                      className="m-2 w-4/5 rounded-md hover:bg-white/25 text-xl p-1 duration-300"
-                    >
-                      <Link href={`/files/${file.filesId}`}>
-                        {file.filesIcon}
-                        {"  "}
-                        {file.filesTitle}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="w-1/2 px-6 flex h-fit gap-2">
-                <input
-                  className="w-[9%] placeholder:text-6xl hover:bg-white/20 duration-200 placeholder:text-white/40 text-3xl flex justify-center bg-transparent rounded-md border-2 border-white/40 focus:outline-none focus:border-white/90"
-                  placeholder="+"
-                  maxLength={2}
-                  value={iconId}
-                  onChange={(e) => setIconId(e.target.value)}
-                />
-                <input
-                  className="bg-transparent w-[90%] text-3xl border-b-2 border-white/40 focus:outline-none focus:border-white/90"
-                  type="text"
-                  placeholder="File Title"
-                  value={fileTitle}
-                  onChange={(e) => setFileTitle(e.target.value)}
-                />
-                <button
-                  className="text-2xl w-fit hover:bg-white/15 rounded-lg p-2 duration-200"
-                  onClick={createFile}
-                >
-                  Create
-                </button>
-              </div>
-            </div>
+            <Files folderId={folderId} user={user} workId={workId} />
           </div>
         </>
       )}

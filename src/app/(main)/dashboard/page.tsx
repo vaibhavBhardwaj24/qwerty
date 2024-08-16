@@ -122,7 +122,7 @@ const DashboardPage = () => {
   return (
     <div className="w-full h-full flex bg-dot-white/[0.2]  flex-col justify-center items-center p-5">
       {createWork ? (
-        <div className="flex flex-col w-1/2 h-2/3 bg-black">
+        <div className="flex flex-col w-1/2 h-2/3 border-[1px] p-3 rounded-md bg-black">
           <div className="flex gap-2 m-2">
             <input
               className="w-[9%] placeholder:text-7xl hover:bg-white/20 duration-200 placeholder:text-white/40 text-4xl flex justify-center bg-transparent rounded-md border-2 border-white/40 focus:outline-none focus:border-white/90"

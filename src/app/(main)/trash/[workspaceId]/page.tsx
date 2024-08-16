@@ -19,11 +19,14 @@ interface Folder {
 interface File {
   fileId: string;
   filesTitle: string;
+  fileIcon: string;
 }
 
 interface TrashData {
   folders: Folder[];
   files: File[];
+  workspaceId: string;
+  workspaceTitle: string;
 }
 
 const TrashPage: React.FC = () => {
@@ -33,7 +36,12 @@ const TrashPage: React.FC = () => {
     : params.workspaceId;
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [trash, setTrash] = useState<TrashData>({ folders: [], files: [] });
+  const [trash, setTrash] = useState<TrashData>({
+    folders: [],
+    files: [],
+    workspaceId,
+    workspaceTitle: "",
+  });
   const [popup, setPopup] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
 
@@ -167,10 +175,12 @@ const TrashPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post<{ trash: TrashData }>("/api/trash", {
+      const response = await axios.post("/api/trash", {
         workspaceId,
       });
-      setTrash(response.data.trash);
+      console.log(response.data.trash[0]);
+
+      setTrash(response.data.trash[0]);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching trash data:", error);
@@ -192,7 +202,7 @@ const TrashPage: React.FC = () => {
           <LoadingPage />
         </div>
       ) : (
-        <div className="h-full w-full bg-grid-white/[0.2]  flex flex-col pt-8 p-4">
+        <div className="h-full w-full bg-dot-white/[0.2]  flex flex-col pt-8 p-4">
           {popup && (
             <Popup error={!success} message={success ? "Success" : "Error"} />
           )}

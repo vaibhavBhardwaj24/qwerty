@@ -20,6 +20,7 @@ export const loginAction = async (datas: {
 
   if (error) {
     console.log(error);
+    return { message: false };
   } else {
     return { message: true, data: data };
   }
@@ -45,6 +46,9 @@ export const SignUpAction = async (datas: {
   if (error) {
     // redirect("/error");
     console.log(error);
+    if (error.status == 422) {
+      return { success: false, message: error.message };
+    }
   }
 
   console.log(data);

@@ -33,11 +33,16 @@ const Sidebar = () => {
     workspaceIcon: string;
     workspaceTitle: string;
     workspacePrivate: boolean;
-    ownerId: string;
+    // owner: Owner[];
     folders: Folder[];
     collaborators: Collaborator[];
   }
-
+  interface Owner {
+    ownerEmail: string;
+    ownerAvatar: string;
+    ownerId: string;
+    ownerName: string;
+  }
   interface Folder {
     folderId: string;
     folderIcon: string;
@@ -102,6 +107,12 @@ const Sidebar = () => {
   };
 
   const [workspace, setWorkspace] = useState<Workspace[]>([]);
+  const [owner, setOwner] = useState<Owner>({
+    ownerEmail: "",
+    ownerAvatar: "",
+    ownerId: "",
+    ownerName: "",
+  });
   const [isDisabled, setIsDisabled] = useState(true);
   const [makefolder, setMakeFolder] = useState(false);
   const [folderTitle, setFolderTitle] = useState("");
@@ -113,6 +124,7 @@ const Sidebar = () => {
   const [InviteUser, setInviteUser] = useState(false);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<any>([]);
+  const [color, setColor] = useState("");
   const [openCollab, setOpenCollab] = useState(false);
   const router = useParams();
 
@@ -147,62 +159,93 @@ const Sidebar = () => {
 
       if (res.data.success) {
         setWorkspace(res.data.workspace);
-        // console.log(res.data.workspace[0].workspacePrivate);
+        setOwner(res.data.workspace[0].owner);
+        console.log(res.data.workspace[0].owner);
+        const color = stringToHexColor(res.data.workspace[0].owner.ownerId);
+        setColor(color);
+        // if (
+        //   user.data.session?.user.id &&
+        //   res.data.workspace[0].workspacePrivate
+        // ) {
+        //   console.log("vbnm");
+        //   // const isCollab=re
+        //   if (res.data.workspace[0].ownerId != user.data.session?.user.id) {
+        //     console.log("not owner");
+        //     const isCollab = res.data.workspace[0].collaborators.find(
+        //       (obj: any) => obj.collaboratorId === user.data.session?.user.id
+        //     );
+        //     console.log("iscollabed", isCollab);
+        //     if (Object.keys(isCollab).length == 0) {
+        //       forward.push("/notAllowed");
+        //     } else {
+        //       console.log("disabe value before", disabled);
+        //       setDisabled(false);
+        //       setIsDisabled(false);
+        //       console.log("disabe value after", disabled);
+        //       console.log("not disabled", disabled);
+        //     }
+        //   } else {
+        //     console.log("owner");
+        //     console.log("disabe value before", disabled);
+        //     setDisabled(false);
+        //     setIsDisabled(false);
+        //     console.log("disabe value after", disabled);
+        //   }
+        //   console.log(res.data.workspace[0].collaborators);
+        // }
+        // if (
+        //   user.data.session?.user.id &&
+        //   res.data.workspace[0].workspacePrivate
+        // ) {
+        //   console.log("vbnm");
+        //   // const isCollab=re
+        //   if (res.data.workspace[0].ownerId != user.data.session?.user.id) {
+        //     console.log("not owner");
+        //     const isCollab = res.data.workspace[0].collaborators.find(
+        //       (obj: any) => obj.collaboratorId === user.data.session?.user.id
+        //     );
+        //     console.log("iscollabed", isCollab);
+        //     if (Object.keys(isCollab).length != 0) {
+        //       // handleDisable(true);
+        //       setDisabled(true);
+        //       setIsDisabled(true);
+        //     } else {
+        //       // handleDisable(false);
+        //       setDisabled(false);
+        //       setIsDisabled(false);
+        //       console.log("not disabled");
+        //     }
+        //   } else {
+        //     console.log("owner");
+        //   }
+        //   console.log(res.data.workspace[0].collaborators);
+        // }
+        if (
+          user.data.session?.user.id &&
+          res.data.workspace[0].workspacePrivate
+        ) {
+          const workspace = res.data.workspace[0];
+          const isOwner = workspace.ownerId === user.data.session?.user.id;
 
-        if (
-          user.data.session?.user.id &&
-          res.data.workspace[0].workspacePrivate
-        ) {
-          console.log("vbnm");
-          // const isCollab=re
-          if (res.data.workspace[0].ownerId != user.data.session?.user.id) {
-            console.log("not owner");
-            const isCollab = res.data.workspace[0].collaborators.find(
+          if (!isOwner) {
+            console.log("Not owner");
+            const isCollab = workspace.collaborators.find(
               (obj: any) => obj.collaboratorId === user.data.session?.user.id
             );
-            console.log("iscollabed", isCollab);
-            if (Object.keys(isCollab).length == 0) {
+            if (isCollab) {
+              setDisabled(false);
+              // setIsDisabled(false);
+              console.log("is collab");
+            } else {
               forward.push("/notAllowed");
-            } else {
-              // handleDisable(false);
-              setDisabled(false);
-              setIsDisabled(false);
-              console.log("not disabled");
             }
           } else {
-            console.log("owner");
-            // handleDisable(false);
+            console.log("Owner");
             setDisabled(false);
-            setIsDisabled(false);
+            // setIsDisabled(false);
+            console.log("no collab");
           }
-          console.log(res.data.workspace[0].collaborators);
-        }
-        if (
-          user.data.session?.user.id &&
-          res.data.workspace[0].workspacePrivate
-        ) {
-          console.log("vbnm");
-          // const isCollab=re
-          if (res.data.workspace[0].ownerId != user.data.session?.user.id) {
-            console.log("not owner");
-            const isCollab = res.data.workspace[0].collaborators.find(
-              (obj: any) => obj.collaboratorId === user.data.session?.user.id
-            );
-            console.log("iscollabed", isCollab);
-            if (Object.keys(isCollab).length != 0) {
-              // handleDisable(true);
-              setDisabled(true);
-              setIsDisabled(true);
-            } else {
-              // handleDisable(false);
-              setDisabled(false);
-              setIsDisabled(false);
-              console.log("not disabled");
-            }
-          } else {
-            console.log("owner");
-          }
-          console.log(res.data.workspace[0].collaborators);
+          console.log("Collaborators:", workspace.collaborators);
         }
 
         setLoading(false);
@@ -213,12 +256,30 @@ const Sidebar = () => {
       console.error("Error fetching data:", error);
     }
   };
+  const stringToHexColor = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+    }
+
+    // Convert hash to a 6-digit hex code
+    const color =
+      ((hash >> 16) & 0xff).toString(16).padStart(2, "0") +
+      ((hash >> 8) & 0xff).toString(16).padStart(2, "0") +
+      (hash & 0xff).toString(16).padStart(2, "0");
+
+    return `#${color}`;
+  };
   useEffect(() => {
     if (!workspaceId) return; // Ensure workspaceId is available
 
     fetchData();
   }, [workId]); // Add workspaceId to the dependency array
-
+  useEffect(() => {
+    setIsDisabled(disabled);
+    console.log(disabled, "qwerty");
+  }, [disabled]);
   return (
     <div className="border-r-2 border-black h-full w-[25vw] flex flex-col items-center p-4 pt-8 overflow-auto">
       {loading ? (
@@ -230,6 +291,7 @@ const Sidebar = () => {
       ) : (
         // <h1>loaded</h1>
         <div className="flex flex-col w-full">
+          <h1>{isDisabled ? "disabled" : " not disabled"}</h1>
           <Link
             href={`/dashboard/${workspace[0].workspaceId}`}
             className="text-5xl hover:underline duration-200 pb-2"
@@ -264,6 +326,8 @@ const Sidebar = () => {
               <button
                 className="text-xl hover:bg-zinc-800 p-2 rounded-md duration-300"
                 onClick={() => {
+                  console.log(workspace[0]);
+
                   setOpenCollab(!openCollab);
                 }}
               >
@@ -293,6 +357,27 @@ const Sidebar = () => {
                 ) : (
                   <>
                     <div>
+                      <div className="h-5 w-fit rounded-full flex-row flex gap-1 ">
+                        {owner.ownerAvatar ? (
+                          <>
+                            <img
+                              className="h-5 w-5 rounded-full object-fill"
+                              src={owner.ownerAvatar}
+                              alt=""
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <div
+                              className="h-5 w-5 rounded-full text-xs font-bold text-black flex justify-center items-center"
+                              style={{ backgroundColor: color }}
+                            >
+                              {owner.ownerAvatar.substring(0, 2)}
+                            </div>
+                          </>
+                        )}
+                        {owner.ownerName} (owner)
+                      </div>
                       {workspace[0].collaborators.map(
                         (collab: any, index: number) => (
                           <div
@@ -307,19 +392,6 @@ const Sidebar = () => {
                               collaboratorId={collab.collaboratorId}
                               collaboratorsName={collab.collaboratorsName}
                             />
-                            {/* {collab.collaboratorsName ||
-                              collab.collaboratorEmail}
-                            <button
-                              disabled={isDisabled}
-                              onClick={() => {
-                                removeCollab(collab.collId);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faXmark}
-                                className="hover:opacity-90 dur opacity-60"
-                              />
-                            </button> */}
                           </div>
                         )
                       )}
