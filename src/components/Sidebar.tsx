@@ -220,10 +220,8 @@ const Sidebar = () => {
         //   }
         //   console.log(res.data.workspace[0].collaborators);
         // }
-        if (
-          user.data.session?.user.id &&
-          res.data.workspace[0].workspacePrivate
-        ) {
+
+        if (user.data.session?.user.id) {
           const workspace = res.data.workspace[0];
           const isOwner = workspace.ownerId === user.data.session?.user.id;
 
@@ -237,7 +235,9 @@ const Sidebar = () => {
               // setIsDisabled(false);
               console.log("is collab");
             } else {
-              forward.push("/notAllowed");
+              if (res.data.workspace[0].workspacePrivate) {
+                forward.push("/notAllowed");
+              }
             }
           } else {
             console.log("Owner");
@@ -246,6 +246,12 @@ const Sidebar = () => {
             console.log("no collab");
           }
           console.log("Collaborators:", workspace.collaborators);
+        } else {
+          console.log(
+            "somthing is very wrong",
+            user.data.session?.user.id,
+            res.data.workspace[0].workspacePrivate
+          );
         }
 
         setLoading(false);
@@ -291,7 +297,7 @@ const Sidebar = () => {
       ) : (
         // <h1>loaded</h1>
         <div className="flex flex-col w-full">
-          {/* <h1>{isDisabled ? "disabled" : " not disabled"}</h1> */}
+          <h1>{isDisabled ? "disabled" : " not disabled"}</h1>
           <Link
             href={`/dashboard/${workspace[0].workspaceId}`}
             className="text-5xl hover:underline duration-200 pb-2"
