@@ -291,7 +291,7 @@ const Sidebar = () => {
       ) : (
         // <h1>loaded</h1>
         <div className="flex flex-col w-full">
-          <h1>{isDisabled ? "disabled" : " not disabled"}</h1>
+          {/* <h1>{isDisabled ? "disabled" : " not disabled"}</h1> */}
           <Link
             href={`/dashboard/${workspace[0].workspaceId}`}
             className="text-5xl hover:underline duration-200 pb-2"

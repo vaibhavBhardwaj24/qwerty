@@ -62,6 +62,7 @@ const Todo: React.FC<todoProps> = ({
         // Optionally, revert state if the update fails
         setIsComplete(isComplete);
       } else {
+        // fetchData();
         console.log("Updated successfully:", res, newCompleteStatus);
       }
     } catch (error) {
@@ -85,6 +86,7 @@ const Todo: React.FC<todoProps> = ({
         // Optionally, revert state if the update fails
         setIsUrgent(isUrgent);
       } else {
+        // fetchData();
         console.log("Updated successfully:", res, newUrgentStatus);
       }
     } catch (error) {
@@ -102,12 +104,14 @@ const Todo: React.FC<todoProps> = ({
       .eq("id", todoId);
     console.log(res);
     if (res.status == 204) {
+      // fetchData();
       setEdit(!edit);
     }
   };
   const deleteTodo = async () => {
     const res = await supabase.from("todo").delete().eq("id", todoId);
     console.log(res);
+    // fetchData();
   };
   const fetchData = async () => {
     const res = await supabase.from("subTodo").select("*").eq("todoId", todoId);
@@ -137,18 +141,16 @@ const Todo: React.FC<todoProps> = ({
     if (error) {
       console.error(error);
     } else {
-      fetchData(); // Refresh the list after adding a new subTodo
+      fetchData();
     }
   };
-  // useEffect(() => {
-  //   setIsComplete(todoCompleted);
-  // }, [todoCompleted]);
+ 
   useEffect(() => {
-    setIsComplete(todoCompleted); // Sync local state with props
+    setIsComplete(todoCompleted); 
   }, [todoCompleted]);
 
   useEffect(() => {
-    setIsUrgent(todoUrgent); // Sync local state with props
+    setIsUrgent(todoUrgent); 
   }, [todoUrgent]);
 
   return (
@@ -258,8 +260,8 @@ const Todo: React.FC<todoProps> = ({
         <>
           {loading ? (
             <div className="w-full h-full">
-            <LoadingPage />
-          </div>
+              <LoadingPage />
+            </div>
           ) : (
             <>
               <div className="w-10/12 mt-1 flex items-center gap-2">
