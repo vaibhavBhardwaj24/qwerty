@@ -44,9 +44,9 @@ const ShowFiles: React.FC<showFileProps> = ({
   const router = useRouter();
   const fetchData = async () => {
     const data = { folderId };
-    const result = await axios.post("/api/folderDetails", data);
-    console.log(result.data.folders[0].files);
-    setResult(result.data.folders[0].files);
+    const result = await axios.post("/api/getFiles", data);
+    console.log(result.data.files);
+    setResult(result.data.files);
     setLoading(false);
   };
   const inTrash = async ({ fileId }: { fileId: string }) => {
