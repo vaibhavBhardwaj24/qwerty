@@ -1,1 +1,0 @@
-ALTER TABLE "workspace" ALTER COLUMN "createdAt" SET DEFAULT now();

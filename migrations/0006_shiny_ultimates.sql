@@ -1,1 +1,0 @@
-ALTER TABLE "collaborators" ADD COLUMN "email" text;
