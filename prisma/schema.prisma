@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  pages   Page[]
+  members WorkspaceMember[]
+}
+
+model Page {
+  id          String   @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  title       String
+  icon        String?
+  cover       String?
+  private     Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blocks    Block[]
+  favorites Favorite[]
+}
+
+model Block {
+  id        String   @id @default(uuid())
+  pageId    String
+  parentId  String?
+  page      Page    @relation(fields: [pageId], references: [id])
+  parent    Block?  @relation("BlockChildren", fields: [parentId], references: [id])
+  children  Block[] @relation("BlockChildren")
+
+  type      String
+  content   Json
+  order     Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments  Comment[]
+  versions  BlockVersion[]
+}
+
+model Favorite {
+  userId String
+  pageId String
+  page   Page @relation(fields: [pageId], references: [id])
+
+  @@id([userId, pageId])
+}
+
+model WorkspaceMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  role        String    // 'owner', 'admin', 'member'
+  createdAt   DateTime  @default(now())
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  blockId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  block Block @relation(fields: [blockId], references: [id])
+}
+
+model BlockVersion {
+  id        String   @id @default(uuid())
+  blockId   String
+  content   Json
+  createdAt DateTime @default(now())
+
+  block Block @relation(fields: [blockId], references: [id])
+}
