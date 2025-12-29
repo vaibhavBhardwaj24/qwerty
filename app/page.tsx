@@ -1,3 +1,4 @@
+import { HomePage } from "@/components/homePage";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 
@@ -5,17 +6,10 @@ export default async function Home() {
   const user = await currentUser();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <div className="text-center">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black w-full">
+      <div className="text-center w-full">
         {user ? (
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-              Welcome back, {user.firstName || user.username || "User"}! 👋
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              You&apos;re signed in as {user.emailAddresses[0]?.emailAddress}
-            </p>
-          </div>
+          <HomePage />
         ) : (
           <div className="space-y-4">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">

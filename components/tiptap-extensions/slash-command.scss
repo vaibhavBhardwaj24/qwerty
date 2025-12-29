@@ -1,0 +1,55 @@
+/* Slash Command Menu Styles */
+.slash-command-menu {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 0.25rem;
+  max-height: 20rem;
+  overflow-y: auto;
+  min-width: 12rem;
+}
+
+.dark .slash-command-menu {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.slash-command-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #334155;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dark .slash-command-item {
+  color: #e2e8f0;
+}
+
+.slash-command-item:hover,
+.slash-command-item.is-selected {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dark .slash-command-item:hover,
+.dark .slash-command-item.is-selected {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.slash-command-item:active {
+  background: #e2e8f0;
+}
+
+.dark .slash-command-item:active {
+  background: #475569;
+}

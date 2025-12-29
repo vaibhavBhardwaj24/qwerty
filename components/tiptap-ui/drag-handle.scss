@@ -1,0 +1,18 @@
+/* Drag Handle Styles */
+.drag-handle-floating {
+  z-index: 50;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.simple-editor-wrapper {
+  position: relative;
+}
+
+.simple-editor-content {
+  position: relative;
+}
+
+.simple-editor-content .ProseMirror {
+  position: relative;
+}

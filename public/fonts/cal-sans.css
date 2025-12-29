@@ -1,0 +1,8 @@
+/* Cal Sans SemiBold - fallback to system fonts */
+@font-face {
+  font-family: "Cal Sans";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: local("Cal Sans SemiBold"), local("CalSans-SemiBold");
+}
