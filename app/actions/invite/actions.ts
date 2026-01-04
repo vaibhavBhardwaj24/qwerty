@@ -10,6 +10,11 @@ export async function getInviteDetails(inviteId: string) {
     if (!inviteId) {
       throw new Error("Invite ID is required");
     }
+
+    if (!redisClient) {
+      throw new Error("Redis is not configured");
+    }
+
     console.log(inviteId);
     // Retrieve invite from Redis using inviteId
     const inviteData = await redisClient.get(`invite:${inviteId}`);
@@ -65,6 +70,10 @@ export async function acceptInvite(inviteId: string) {
 
     if (!inviteId) {
       throw new Error("Invite ID is required");
+    }
+
+    if (!redisClient) {
+      throw new Error("Redis is not configured");
     }
 
     // Retrieve invite from Redis using inviteId key
