@@ -260,11 +260,10 @@ export function SimpleEditor({
       TableHeader,
       TableCell,
       SlashCommand.configure({
-        suggestion,
+        suggestion: suggestion(),
       }),
       TaskTable,
     ],
-    content,
     onUpdate: ({ editor }) => {
       if (onUpdate) {
         onUpdate(editor.getJSON());
@@ -316,7 +315,7 @@ export function SimpleEditor({
           className="simple-editor-content"
         />
 
-        {editor && <DragHandle editor={editor} />}
+        {/* {editor && <DragHandle editor={editor} />} */}
       </EditorContext.Provider>
     </div>
   );

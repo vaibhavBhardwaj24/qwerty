@@ -19,13 +19,7 @@ export default function Page() {
 
   return (
     <div className="flex h-screen">
-      {/* Editor Section */}
-      <div className="flex-1 overflow-auto">
-        <SimpleEditor onUpdate={setEditorContent} />
-      </div>
-
-      {/* JSON Output Section */}
-      {/* <div className="w-[500px] border-l border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col">
+      <div className="w-[500px] border-l border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col">
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             JSON Output
@@ -56,7 +50,12 @@ export default function Page() {
               : "Start typing to see JSON output..."}
           </pre>
         </div>
-      </div> */}
+      </div>{" "}
+      Editor Section
+      <div className="flex-1 overflow-auto">
+        <SimpleEditor onUpdate={setEditorContent} />
+      </div>
+      {/* JSON Output Section */}
     </div>
   );
 }

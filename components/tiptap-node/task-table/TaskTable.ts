@@ -11,16 +11,10 @@ export const TaskTable = Node.create({
   addAttributes() {
     return {
       rows: {
-        default: [
-          {
-            id: `task-${Date.now()}`,
-            title: "Sample task",
-            assignee: "",
-            due: "",
-            status: "todo",
-            priority: "medium",
-          },
-        ],
+        default: [],
+      },
+      pageId: {
+        default: "",
       },
     };
   },

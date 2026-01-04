@@ -67,6 +67,7 @@ export const CommandMenu = forwardRef((props: any, ref) => {
               onSelect={() => selectItem(index)}
               className={index === selectedIndex ? "bg-accent" : ""}
             >
+              <span>{item.icon}</span>
               <span>{item.title}</span>
             </CommandItem>
           ))}

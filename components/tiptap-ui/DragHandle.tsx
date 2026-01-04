@@ -147,38 +147,48 @@ export function DragHandle({ editor }: DragHandleProps) {
     }
 
     try {
-      const targetPos = editor.view.posAtDOM(targetBlock, 0);
+      const { state } = editor;
+      const { tr, doc } = state;
+
       const draggedPos = draggedPosRef.current;
+      const targetPos = editor.view.posAtDOM(targetBlock, 0);
 
-      // Get the node at the dragged position
-      const $pos = editor.state.doc.resolve(draggedPos);
-      const node = $pos.nodeAfter;
+      // Resolve positions to get the actual nodes
+      const $draggedPos = doc.resolve(draggedPos);
+      const draggedDepth = $draggedPos.depth;
+      const draggedNode = $draggedPos.node(draggedDepth);
 
-      if (!node) return;
+      // Get the start and end positions of the dragged block
+      const draggedStart = $draggedPos.before(draggedDepth);
+      const draggedEnd = $draggedPos.after(draggedDepth);
 
-      const nodeSize = node.nodeSize;
+      // Get the slice containing the dragged node
+      const slice = doc.slice(draggedStart, draggedEnd);
 
-      // Calculate insert position
-      let insertPos = targetPos;
+      if (!slice || slice.size === 0) return;
 
-      // If dragging down, insert after the target
-      if (draggedPos < targetPos) {
-        insertPos = targetPos;
+      // Determine where to insert
+      const $targetPos = doc.resolve(targetPos);
+      const targetDepth = $targetPos.depth;
+      let insertPos = $targetPos.before(targetDepth);
+
+      // If we're dragging down, insert after the target
+      if (draggedStart < targetPos) {
+        insertPos = $targetPos.after(targetDepth);
       }
 
-      // Create a transaction to move the node
-      const tr = editor.state.tr;
+      // Delete the dragged block first
+      tr.delete(draggedStart, draggedEnd);
 
-      // First, insert the node at the new position
-      tr.insert(insertPos, node);
+      // Adjust insert position if we deleted before it
+      if (draggedStart < insertPos) {
+        insertPos -= draggedEnd - draggedStart;
+      }
 
-      // Then delete from the old position
-      // Adjust the delete position if we inserted before it
-      const deletePos =
-        insertPos <= draggedPos ? draggedPos + nodeSize : draggedPos;
-      tr.delete(deletePos, deletePos + nodeSize);
+      // Insert the slice at the new position
+      tr.insert(insertPos, slice.content);
 
-      // Apply the transaction
+      // Dispatch the transaction
       editor.view.dispatch(tr);
     } catch (error) {
       console.error("Error moving block:", error);

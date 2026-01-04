@@ -1,10 +1,18 @@
 // Page actions
-export { createPage, getPage, updatePage } from "./page/actions";
+export {
+  createPage,
+  getPage,
+  updatePage,
+  favoritePage,
+  unfavoritePage,
+  isFavoritePage,
+} from "./page/actions";
 
 // Workspace actions
 export {
   createWorkspace,
   getWorkspaces,
+  getWorkspaceById,
   updateWorkspace,
 } from "./workspace/actions";
 
@@ -20,3 +28,13 @@ export {
   removeMember,
   updateMemberRole,
 } from "./workspace/members/actions";
+
+// Mention actions
+export {
+  createMention,
+  getMentions,
+  getPageMentions,
+  getWorkspaceMembers,
+  deleteMention,
+  getWorkspaceMentions,
+} from "./mentions/actions";

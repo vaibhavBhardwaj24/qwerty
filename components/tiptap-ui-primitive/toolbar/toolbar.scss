@@ -32,12 +32,17 @@
 
   &[data-variant="fixed"] {
     position: sticky;
-    top: 0;
+    top: 89vh;
     z-index: 10;
     width: 100%;
+    max-width: 900px;
+    margin: 0 11vw;
     min-height: var(--tt-toolbar-height);
     background: var(--tt-toolbar-bg-color);
     border-bottom: 1px solid var(--tt-toolbar-border-color);
+    border-left: 1px solid var(--tt-toolbar-border-color);
+    border-right: 1px solid var(--tt-toolbar-border-color);
+    border-radius: 0.5rem;
     padding: 0 0.5rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -52,6 +57,10 @@
     @media (max-width: 480px) {
       position: absolute;
       top: auto;
+      max-width: 100%;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
       height: calc(var(--tt-toolbar-height) + var(--tt-safe-area-bottom));
       border-top: 1px solid var(--tt-toolbar-border-color);
       border-bottom: none;

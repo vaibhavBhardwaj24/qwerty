@@ -64,9 +64,14 @@ export async function getPage(pageId: string) {
       where: {
         id: pageId,
       },
-      include: {
-        blocks: true,
-        workspace: true,
+      select: {
+        workspaceId: true,
+        title: true,
+        icon: true,
+        cover: true,
+        private: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -144,6 +149,169 @@ export async function updatePage(data: {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update page",
+    };
+  }
+}
+
+export async function favoritePage(data: { pageId: string }) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const { pageId } = data;
+
+    if (!pageId) {
+      throw new Error("Page ID is required");
+    }
+
+    // Get page with workspace info
+    const page = await prisma.page.findUnique({
+      where: { id: pageId },
+      include: { workspace: true },
+    });
+
+    if (!page) {
+      throw new Error("Page not found");
+    }
+
+    // Check workspace membership and role
+    const isMember = await isWorkspaceMember(userId, page.workspaceId);
+    if (!isMember) {
+      throw new Error("You don't have permission to favorite this page");
+    }
+
+    const updatedPage = await prisma.favorite.create({
+      data: {
+        pageId,
+        userId,
+      },
+    });
+
+    revalidatePath(`/page/${pageId}`);
+    return { success: true, data: updatedPage };
+  } catch (error) {
+    console.error("Failed to favorite page:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to favorite page",
+    };
+  }
+}
+
+export async function unfavoritePage(data: { pageId: string }) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const { pageId } = data;
+
+    if (!pageId) {
+      throw new Error("Page ID is required");
+    }
+
+    // Get page with workspace info
+    const page = await prisma.page.findUnique({
+      where: { id: pageId },
+      include: { workspace: true },
+    });
+
+    if (!page) {
+      throw new Error("Page not found");
+    }
+
+    // Check workspace membership and role
+    const isMember = await isWorkspaceMember(userId, page.workspaceId);
+    if (!isMember) {
+      throw new Error("You don't have permission to unfavorite this page");
+    }
+
+    await prisma.favorite.delete({
+      where: {
+        userId_pageId: {
+          userId,
+          pageId,
+        },
+      },
+    });
+
+    revalidatePath(`/page/${pageId}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to unfavorite page:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to unfavorite page",
+    };
+  }
+}
+export async function isFavoritePage(data: { pageId: string }) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const { pageId } = data;
+
+    if (!pageId) {
+      throw new Error("Page ID is required");
+    }
+
+    const favorite = await prisma.favorite.findUnique({
+      where: {
+        userId_pageId: {
+          userId,
+          pageId,
+        },
+      },
+    });
+
+    return { success: true, data: favorite !== null };
+  } catch (error) {
+    console.error("Failed to check favorite page:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to check favorite page",
+    };
+  }
+}
+export async function getFavoritePages() {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const favoritePages = await prisma.favorite.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        pageId: true,
+        page: {
+          select: {
+            title: true,
+            icon: true,
+          },
+        },
+      },
+    });
+
+    return { success: true, data: favoritePages };
+  } catch (error) {
+    console.error("Failed to get favorite pages:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to get favorite pages",
     };
   }
 }

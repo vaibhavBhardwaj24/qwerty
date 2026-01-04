@@ -4,7 +4,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, GripVertical, Calendar, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trash2, GripVertical, Calendar, User, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -40,46 +41,58 @@ export function KanbanCard({ task, onUpdate, onDelete }: KanbanCardProps) {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const priorityColors = {
-    low: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-    medium:
-      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-    high: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  const priorityConfig = {
+    low: {
+      badge:
+        "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+      icon: "text-blue-500",
+    },
+    medium: {
+      badge:
+        "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+      icon: "text-amber-500",
+    },
+    high: {
+      badge:
+        "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
+      icon: "text-red-500",
+    },
   };
 
   return (
     <Card
       ref={setNodeRef}
       style={style}
-      className="group cursor-grab active:cursor-grabbing"
+      className="group cursor-grab active:cursor-grabbing transition-all hover:shadow-md border-border bg-card"
     >
-      <CardContent className="p-3">
-        <div className="mb-2 flex items-start justify-between gap-2">
-          <div className="flex-1">
+      <CardContent className="p-4">
+        {/* Header with title and actions */}
+        <div className="mb-3 flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
             {isEditing ? (
-              <input
+              <Input
                 type="text"
                 value={task.title}
                 onChange={(e) => onUpdate({ title: e.target.value })}
                 onBlur={() => setIsEditing(false)}
                 onKeyDown={(e) => e.key === "Enter" && setIsEditing(false)}
-                className="w-full rounded border border-slate-300 dark:border-slate-600 bg-transparent px-2 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="h-7 text-sm font-semibold"
                 autoFocus
               />
             ) : (
               <h5
                 onClick={() => setIsEditing(true)}
-                className="cursor-text text-sm font-medium text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                className="cursor-text text-sm font-semibold text-foreground hover:text-primary transition-colors truncate"
               >
                 {task.title || "Untitled task"}
               </h5>
             )}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <button
               {...attributes}
               {...listeners}
-              className="cursor-grab text-slate-400 opacity-0 transition-opacity hover:text-slate-600 group-hover:opacity-100 dark:hover:text-slate-300"
+              className="cursor-grab text-muted-foreground opacity-0 transition-all hover:text-foreground group-hover:opacity-100 p-1 rounded hover:bg-accent"
             >
               <GripVertical className="h-4 w-4" />
             </button>
@@ -87,53 +100,59 @@ export function KanbanCard({ task, onUpdate, onDelete }: KanbanCardProps) {
               variant="ghost"
               size="sm"
               onClick={onDelete}
-              className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+              className="h-7 w-7 p-0 opacity-0 transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
             >
-              <Trash2 className="h-3 w-3 text-red-500" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
 
-        <div className="space-y-2">
-          {task.assignee && (
-            <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-              <User className="h-3 w-3" />
-              <input
-                type="text"
-                value={task.assignee}
-                onChange={(e) => onUpdate({ assignee: e.target.value })}
-                className="flex-1 bg-transparent focus:outline-none"
-                placeholder="Assignee"
-              />
-            </div>
-          )}
+        {/* Task details */}
+        <div className="space-y-2.5">
+          {/* Assignee */}
+          <div className="flex items-center gap-2 text-xs">
+            <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <Input
+              type="text"
+              value={task.assignee}
+              onChange={(e) => onUpdate({ assignee: e.target.value })}
+              className="h-7 text-xs bg-background/50 border-border/50 focus:bg-background"
+              placeholder="Assign to..."
+            />
+          </div>
 
-          {task.due && (
-            <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-              <Calendar className="h-3 w-3" />
-              <input
-                type="text"
-                value={task.due}
-                onChange={(e) => onUpdate({ due: e.target.value })}
-                className="flex-1 bg-transparent focus:outline-none"
-                placeholder="Due date"
-              />
-            </div>
-          )}
+          {/* Due date */}
+          <div className="flex items-center gap-2 text-xs">
+            <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <Input
+              type="text"
+              value={task.due}
+              onChange={(e) => onUpdate({ due: e.target.value })}
+              className="h-7 text-xs bg-background/50 border-border/50 focus:bg-background"
+              placeholder="Due date..."
+            />
+          </div>
 
-          <div className="flex items-center gap-2">
+          {/* Priority */}
+          <div className="flex items-center gap-2 pt-1">
             <Badge
-              className={`text-xs ${priorityColors[task.priority]}`}
+              className={`text-xs font-medium border ${
+                priorityConfig[task.priority].badge
+              }`}
               variant="secondary"
             >
-              {task.priority}
+              <Flag
+                className={`h-3 w-3 mr-1 ${priorityConfig[task.priority].icon}`}
+              />
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
             </Badge>
             <select
               value={task.priority}
               onChange={(e) =>
                 onUpdate({ priority: e.target.value as Task["priority"] })
               }
-              className="ml-auto rounded border border-slate-300 dark:border-slate-600 bg-transparent px-2 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onPointerDown={(e) => e.stopPropagation()}
+              className="ml-auto h-7 w-[100px] rounded-md border border-input bg-background px-2 text-xs focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>

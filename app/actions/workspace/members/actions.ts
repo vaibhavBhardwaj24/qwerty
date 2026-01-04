@@ -114,7 +114,7 @@ export async function inviteMember(data: {
 
     // Get base URL from environment or use localhost
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const inviteLink = `${baseUrl}/invite?inviteId=${inviteId}`;
+    const inviteLink = `${baseUrl}/invite/${inviteId}`;
 
     // Send invitation email
     await sendWorkspaceInvite({
@@ -250,6 +250,62 @@ export async function updateMemberRole(data: {
       success: false,
       error:
         error instanceof Error ? error.message : "Failed to update member role",
+    };
+  }
+}
+
+export async function getAllMembers(data: { workspaceId: string }) {
+  try {
+    const { workspaceId } = data;
+    if (!workspaceId) {
+      throw new Error("Workspace ID is required");
+    }
+
+    // Get all workspace members
+    const members = await prisma.workspaceMember.findMany({
+      where: {
+        workspaceId,
+      },
+      select: {
+        userId: true,
+        role: true,
+      },
+    });
+
+    // Get user details from Clerk for each member
+    const clerk = await clerkClient();
+    const userIds = members.map((m) => m.userId);
+
+    // Fetch users from Clerk
+    const users = await Promise.all(
+      userIds.map(async (userId) => {
+        try {
+          const user = await clerk.users.getUser(userId);
+          const memberData = members.find((m) => m.userId === userId);
+          return {
+            id: user.id,
+            email: user.emailAddresses[0]?.emailAddress,
+            name: user.fullName || user.firstName || "Unknown",
+            imageUrl: user.imageUrl,
+            role: memberData?.role,
+          };
+        } catch (error) {
+          console.error(`Error fetching user ${userId}:`, error);
+          return null;
+        }
+      })
+    );
+
+    // Filter out any null values from failed fetches
+    const validUsers = users.filter((user) => user !== null);
+
+    return { success: true, data: validUsers };
+  } catch (error) {
+    console.error("Error getting all members:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to get all members",
     };
   }
 }

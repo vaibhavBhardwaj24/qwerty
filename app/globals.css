@@ -52,15 +52,19 @@
 
 /* THEME 1: Modern Minimal (Light) - Clean & Professional */
 :root {
+  /* Project Brand Colors - Change these to update the whole project */
+  --primary: oklch(0.35 0.12 265);
+  --primary-foreground: oklch(0.98 0.001 0);
+  --accent: oklch(0.88 0.08 265);
+  --accent-foreground: oklch(0.35 0.12 265);
   --radius: 0.625rem;
+
   --background: oklch(0.98 0.001 0);
   --foreground: oklch(0.15 0.03 264);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.15 0.03 264);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.03 264);
-  --primary: oklch(0.35 0.12 265);
-  --primary-foreground: oklch(0.98 0.001 0);
   --secondary: oklch(0.95 0.02 280);
   --secondary-foreground: oklch(0.35 0.12 265);
   --muted: oklch(0.92 0.01 264);
@@ -88,37 +92,48 @@
 
 /* THEME 2: Dark Elegant - Deep & Focus-Friendly */
 .dark {
-  --background: oklch(0.11 0.01 264);
-  --foreground: oklch(0.95 0.002 0);
-  --card: oklch(0.17 0.02 264);
-  --card-foreground: oklch(0.95 0.002 0);
-  --popover: oklch(0.17 0.02 264);
-  --popover-foreground: oklch(0.95 0.002 0);
-  --primary: oklch(0.6 0.15 265);
-  --primary-foreground: oklch(0.11 0.01 264);
-  --secondary: oklch(0.22 0.03 264);
-  --secondary-foreground: oklch(0.95 0.002 0);
-  --muted: oklch(0.25 0.03 264);
-  --muted-foreground: oklch(0.7 0.04 264);
-  --accent: oklch(0.22 0.03 264);
-  --accent-foreground: oklch(0.95 0.002 0);
-  --destructive: oklch(0.68 0.22 25);
-  --border: oklch(0.2 0.01 264 / 30%);
-  --input: oklch(0.2 0.02 264 / 40%);
-  --ring: oklch(0.6 0.12 265);
-  --chart-1: oklch(0.65 0.2 15);
-  --chart-2: oklch(0.7 0.16 180);
-  --chart-3: oklch(0.68 0.14 140);
-  --chart-4: oklch(0.72 0.15 50);
-  --chart-5: oklch(0.6 0.18 270);
-  --sidebar: oklch(0.14 0.015 264);
-  --sidebar-foreground: oklch(0.95 0.002 0);
-  --sidebar-primary: oklch(0.6 0.15 265);
-  --sidebar-primary-foreground: oklch(0.11 0.01 264);
-  --sidebar-accent: oklch(0.22 0.03 264);
-  --sidebar-accent-foreground: oklch(0.95 0.002 0);
-  --sidebar-border: oklch(0.2 0.01 264 / 30%);
-  --sidebar-ring: oklch(0.6 0.12 265);
+  /* Project Brand Colors - Change these for dark mode */
+  --primary: #6366f1;
+  --primary-foreground: #f0efed;
+
+  --accent: #4f46e5;
+  --accent-foreground: #f0efed;
+
+  --background: #191919;
+  --foreground: #f0efed;
+  --card: #202020;
+  --card-foreground: #f0efed;
+
+  --popover: #252525;
+  --popover-foreground: #f0efed;
+
+  --secondary: #383c54;
+  --secondary-foreground: #f0efed;
+
+  --muted: #3f4757;
+  --muted-foreground: #9ca3af;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #2d3139;
+  --input: #2a2f3f;
+  --ring: #6366f1;
+
+  --chart-1: #ff6b35;
+  --chart-2: #4ecdc4;
+  --chart-3: #95e1d3;
+  --chart-4: #ffd93d;
+  --chart-5: #9d84b7;
+
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #f0efed;
+  --sidebar-primary: #6366f1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #4f46e5;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2d3139;
+  --sidebar-ring: #6366f1;
 }
 
 /* THEME 3: Colorful Vibrant - Modern & Energetic */

@@ -10,7 +10,7 @@ export async function getInviteDetails(inviteId: string) {
     if (!inviteId) {
       throw new Error("Invite ID is required");
     }
-
+    console.log(inviteId);
     // Retrieve invite from Redis using inviteId
     const inviteData = await redisClient.get(`invite:${inviteId}`);
 
