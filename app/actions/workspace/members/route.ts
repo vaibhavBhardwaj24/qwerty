@@ -96,6 +96,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (!redisClient) {
+      return NextResponse.json(
+        { error: "Redis is not configured - invitations are not available" },
+        { status: 503 }
+      );
+    }
+
     // Check if there's already a pending invite for this email
     const existingInvites = await redisClient.keys(
       `invite:${workspaceId}:${inviteUserEmail}`

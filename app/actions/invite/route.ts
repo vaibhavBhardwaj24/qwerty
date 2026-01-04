@@ -16,6 +16,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (!redisClient) {
+      return NextResponse.json(
+        { error: "Redis is not configured" },
+        { status: 503 }
+      );
+    }
+
     // Retrieve invite from Redis using inviteId
     const inviteData = await redisClient.get(`invite:${inviteId}`);
 
@@ -77,6 +84,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invite ID is required" },
         { status: 400 }
+      );
+    }
+
+    if (!redisClient) {
+      return NextResponse.json(
+        { error: "Redis is not configured" },
+        { status: 503 }
       );
     }
 
