@@ -14,6 +14,9 @@ export async function inviteMember(data: {
   inviteUserEmail: string;
   role: WorkspaceRoleType;
 }) {
+  if (!redisClient) {
+    throw new Error("Redis is not configured");
+  }
   try {
     const { userId } = await auth();
     if (!userId) {
