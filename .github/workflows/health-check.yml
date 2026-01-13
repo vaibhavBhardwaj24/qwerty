@@ -14,41 +14,79 @@ jobs:
       - name: Check Main App Health
         id: main-app
         run: |
+          echo "Checking main app health..."
           response=$(curl -s -w "\n%{http_code}" ${{ secrets.MAIN_APP_URL }}/api/health)
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
 
-          echo "Response: $body"
           echo "HTTP Code: $http_code"
+          echo "Response Body: $body"
 
-          if [ "$http_code" -ne 200 ]; then
-            echo "::error::Main app health check failed with status $http_code"
+          # Check HTTP status code
+          if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 503 ]; then
+            echo "::error::Main app returned unexpected status $http_code"
             exit 1
           fi
 
+          # Validate JSON response
+          if ! echo "$body" | jq empty 2>/dev/null; then
+            echo "::error::Main app did not return valid JSON. Response: $body"
+            exit 1
+          fi
+
+          # Check service status
           status=$(echo "$body" | jq -r '.status')
-          if [ "$status" != "healthy" ]; then
-            echo "::warning::Main app status is $status"
+          postgres=$(echo "$body" | jq -r '.services.postgres.status')
+          redis=$(echo "$body" | jq -r '.services.redis.status')
+
+          echo "Overall Status: $status"
+          echo "PostgreSQL: $postgres"
+          echo "Redis: $redis"
+
+          if [ "$status" = "unhealthy" ]; then
+            echo "::error::Main app is unhealthy"
+            exit 1
+          elif [ "$status" = "degraded" ]; then
+            echo "::warning::Main app is degraded (likely Redis is down)"
           fi
 
       - name: Check WebSocket Server Health
         id: ws-server
         run: |
+          echo "Checking WebSocket server health..."
           response=$(curl -s -w "\n%{http_code}" ${{ secrets.WS_SERVER_URL }}/health)
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
 
-          echo "Response: $body"
           echo "HTTP Code: $http_code"
+          echo "Response Body: $body"
 
-          if [ "$http_code" -ne 200 ]; then
-            echo "::error::WebSocket server health check failed with status $http_code"
+          # Check HTTP status code
+          if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 503 ]; then
+            echo "::error::WebSocket server returned unexpected status $http_code"
             exit 1
           fi
 
+          # Validate JSON response
+          if ! echo "$body" | jq empty 2>/dev/null; then
+            echo "::error::WebSocket server did not return valid JSON. Response: $body"
+            exit 1
+          fi
+
+          # Check service status
           status=$(echo "$body" | jq -r '.status')
-          if [ "$status" != "healthy" ]; then
-            echo "::warning::WebSocket server status is $status"
+          postgres=$(echo "$body" | jq -r '.services.postgres.status')
+          redis=$(echo "$body" | jq -r '.services.redis.status')
+
+          echo "Overall Status: $status"
+          echo "PostgreSQL: $postgres"
+          echo "Redis: $redis"
+
+          if [ "$status" = "unhealthy" ]; then
+            echo "::error::WebSocket server is unhealthy"
+            exit 1
+          elif [ "$status" = "degraded" ]; then
+            echo "::warning::WebSocket server is degraded (likely Redis is down)"
           fi
 
       - name: Report Success

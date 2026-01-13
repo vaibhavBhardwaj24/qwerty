@@ -14,15 +14,23 @@ jobs:
       - name: Run Snapshot Cleanup
         id: cleanup
         run: |
+          echo "Running snapshot cleanup..."
           response=$(curl -s -w "\n%{http_code}" -X POST ${{ secrets.MAIN_APP_URL }}/api/cleanup/snapshots)
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
 
-          echo "Response: $body"
           echo "HTTP Code: $http_code"
+          echo "Response Body: $body"
 
+          # Check HTTP status code
           if [ "$http_code" -ne 200 ]; then
             echo "::error::Snapshot cleanup failed with status $http_code"
+            exit 1
+          fi
+
+          # Validate JSON response
+          if ! echo "$body" | jq empty 2>/dev/null; then
+            echo "::error::API did not return valid JSON. Response: $body"
             exit 1
           fi
 
