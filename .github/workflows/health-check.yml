@@ -54,7 +54,7 @@ jobs:
         id: ws-server
         run: |
           echo "Checking WebSocket server health..."
-          response=$(curl -s -w "\n%{http_code}" ${{ secrets.WS_SERVER_URL }}/health)
+          response=$(curl -s -w "\n%{http_code}" ${{ secrets.WS_SERVER_URL }}/api/health)
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
 
