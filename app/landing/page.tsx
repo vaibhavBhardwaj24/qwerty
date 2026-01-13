@@ -26,8 +26,12 @@ export default async function LandingPage() {
       <nav className="relative z-10 container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
+              <img
+                src="/qwerty.svg"
+                alt="Qwerty"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-2xl font-bold text-white">Qwerty</span>
           </div>
@@ -174,8 +178,12 @@ export default async function LandingPage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src="/qwerty.svg"
+                  alt="Qwerty"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="text-xl font-bold text-white">Qwerty</span>
             </div>

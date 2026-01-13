@@ -3,6 +3,7 @@ import {
   getWorkspaceById,
   getWorkspaceMentions,
 } from "@/app/actions";
+import { getFavoritePages } from "@/app/actions/page/actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { WorkspaceSidebar } from "@/components/workspace-sidebar";
 import { FileText, Users, Calendar, AtSign } from "lucide-react";
@@ -30,6 +31,10 @@ export default async function WorkspacePage({
   const mentionsData = await getWorkspaceMentions(id);
   const mentions = mentionsData?.data || [];
 
+  // Fetch favorite pages
+  const favoritesData = await getFavoritePages();
+  const favorites = favoritesData?.data || [];
+
   const userName =
     user?.fullName ||
     user?.username ||
@@ -46,6 +51,7 @@ export default async function WorkspacePage({
         userName={userName}
         userEmail={userEmail}
         userImage={user?.imageUrl}
+        favorites={favorites}
       />
 
       {/* Main Content */}

@@ -18,7 +18,9 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { SlashCommand } from "@/components/tiptap-extensions/slash-command";
+import { DollarCommand } from "@/components/tiptap-extensions/dollar-command";
 import suggestion from "@/components/tiptap-extensions/suggestion";
+import aiSuggestion from "@/components/tiptap-extensions/ai-suggestion";
 import { TaskTable } from "@/components/tiptap-node/task-table/TaskTable";
 
 // --- UI Primitives ---
@@ -261,6 +263,9 @@ export function SimpleEditor({
       TableCell,
       SlashCommand.configure({
         suggestion: suggestion(),
+      }),
+      DollarCommand.configure({
+        suggestion: aiSuggestion(),
       }),
       TaskTable,
     ],

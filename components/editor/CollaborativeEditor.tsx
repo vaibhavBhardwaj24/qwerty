@@ -25,7 +25,9 @@ import { Mention } from "@tiptap/extension-mention";
 
 // --- Custom Extensions ---
 import { SlashCommand } from "@/components/tiptap-extensions/slash-command";
+import { DollarCommand } from "@/components/tiptap-extensions/dollar-command";
 import suggestion from "@/components/tiptap-extensions/suggestion";
+import aiSuggestion from "@/components/tiptap-extensions/ai-suggestion";
 import { TaskTable } from "@/components/tiptap-node/task-table/TaskTable";
 import { createMentionSuggestion } from "./mention-suggestion";
 import { deleteMention } from "@/app/actions";
@@ -480,6 +482,9 @@ function CollaborativeEditorInner({
           console.log("Configuring SlashCommand with pageId:", pageId);
           return suggestion(pageId);
         })(),
+      }),
+      DollarCommand.configure({
+        suggestion: aiSuggestion(),
       }),
       Mention.extend({
         addAttributes() {

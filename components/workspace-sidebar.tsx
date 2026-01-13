@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SearchDialog } from "@/components/search-dialog";
 import { useClerk } from "@clerk/nextjs";
 import {
   ChevronDown,
@@ -13,6 +14,7 @@ import {
   Home,
   Search,
   Loader2,
+  Star,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -48,11 +50,24 @@ interface Workspace {
   pages?: Page[];
 }
 
+interface FavoritePage {
+  pageId: string;
+  page: {
+    title: string;
+    icon: string | null;
+    updatedAt: Date;
+    workspace: {
+      name: string;
+    };
+  };
+}
+
 interface WorkspaceSidebarProps {
   workspaces: Workspace[];
   userName: string;
   userEmail?: string;
   userImage?: string;
+  favorites?: FavoritePage[];
 }
 
 export function WorkspaceSidebar({
@@ -60,11 +75,13 @@ export function WorkspaceSidebar({
   userName,
   userEmail = "user@example.com",
   userImage,
+  favorites = [],
 }: WorkspaceSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(
     new Set(workspaces.map((w) => w.id))
   );
+  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(true);
   const params = useParams();
   const currentWorkspaceId = params?.id as string;
   const router = useRouter();
@@ -73,6 +90,7 @@ export function WorkspaceSidebar({
   const [loadingWorkspaceId, setLoadingWorkspaceId] = useState<string | null>(
     null
   );
+  const [searchOpen, setSearchOpen] = useState(false);
   useEffect(() => {
     if (loadingWorkspaceId === currentWorkspaceId) {
       setLoadingWorkspaceId(null);
@@ -89,6 +107,19 @@ export function WorkspaceSidebar({
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Keyboard shortcut for search (Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const toggleWorkspace = (workspaceId: string) => {
@@ -123,10 +154,19 @@ export function WorkspaceSidebar({
         <div className="flex h-12 items-center justify-between px-3 py-2">
           <div
             className={cn(
-              "overflow-hidden transition-all duration-300",
+              "overflow-hidden transition-all duration-300 flex items-center gap-2 px-1",
               isCollapsed ? "w-0 opacity-0" : "w-full opacity-100"
             )}
-          ></div>
+          >
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0">
+              <img
+                src="/qwerty.svg"
+                alt="Qwerty"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+            <span className="font-bold text-lg tracking-tight">Qwerty</span>
+          </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -155,6 +195,7 @@ export function WorkspaceSidebar({
         {/* Search & Home Navigation */}
         <div className="px-2 py-2 space-y-1">
           <button
+            onClick={() => setSearchOpen(true)}
             className={cn(
               "w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
               "text-sm text-muted-foreground hover:text-foreground",
@@ -165,6 +206,11 @@ export function WorkspaceSidebar({
           >
             <Search className="h-4 w-4 flex-shrink-0" />
             {!isCollapsed && <span>Search</span>}
+            {!isCollapsed && (
+              <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            )}
           </button>
 
           <button
@@ -186,6 +232,83 @@ export function WorkspaceSidebar({
         <div className="px-2">
           <div className="h-px bg-border" />
         </div>
+
+        {/* Favorites Section */}
+        {favorites.length > 0 && (
+          <>
+            {!isCollapsed && (
+              <div className="px-3 py-2 flex items-center justify-between">
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Favorites
+                </h2>
+                <button
+                  onClick={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
+                  className="h-5 w-5 flex items-center justify-center hover:bg-accent rounded transition-all duration-200"
+                >
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 text-muted-foreground transition-transform duration-300",
+                      !isFavoritesExpanded && "-rotate-90"
+                    )}
+                  />
+                </button>
+              </div>
+            )}
+
+            {/* Favorites List */}
+            {isFavoritesExpanded && (
+              <div className="px-2 pb-2 space-y-0.5">
+                {favorites.map((favorite) => (
+                  <Tooltip key={favorite.pageId}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          "flex items-center gap-2 px-2 py-1.5 rounded-md",
+                          "text-sm text-muted-foreground hover:text-foreground",
+                          "hover:bg-accent/50 transition-all duration-200 cursor-pointer",
+                          "group",
+                          isCollapsed && "justify-center"
+                        )}
+                        onClick={() => {
+                          router.push(`/page/${favorite.pageId}`);
+                        }}
+                      >
+                        <Star className="h-4 w-4 flex-shrink-0 fill-yellow-500 text-yellow-500" />
+                        {!isCollapsed && (
+                          <>
+                            <div className="h-4 w-4 rounded text-muted-foreground flex-shrink-0">
+                              {favorite.page.icon}
+                            </div>
+                            <span className="flex-1 truncate text-xs">
+                              {favorite.page.title}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    {isCollapsed && (
+                      <TooltipContent side="right" className="text-xs">
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">
+                            {favorite.page.title}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {favorite.page.workspace.name}
+                          </span>
+                        </div>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                ))}
+              </div>
+            )}
+
+            {/* Divider */}
+            <div className="px-2 pb-2">
+              <div className="h-px bg-border" />
+            </div>
+          </>
+        )}
 
         {/* Workspaces Header */}
         {!isCollapsed && (
@@ -398,6 +521,13 @@ export function WorkspaceSidebar({
           </div>
         </div>
       </aside>
+
+      {/* Search Dialog */}
+      <SearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        workspaces={workspaces}
+      />
     </TooltipProvider>
   );
 }

@@ -300,6 +300,12 @@ export async function getFavoritePages() {
           select: {
             title: true,
             icon: true,
+            updatedAt: true,
+            workspace: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },

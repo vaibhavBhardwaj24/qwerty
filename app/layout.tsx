@@ -18,8 +18,11 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Qwerty App",
+  title: "Qwerty",
   description: "Your awesome application",
+  icons: {
+    icon: "/qwerty.svg",
+  },
 };
 
 export default function RootLayout({
