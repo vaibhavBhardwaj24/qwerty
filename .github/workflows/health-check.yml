@@ -1,0 +1,62 @@
+name: Health Check
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC (5:30 AM IST)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Main App Health
+        id: main-app
+        run: |
+          response=$(curl -s -w "\n%{http_code}" ${{ secrets.MAIN_APP_URL }}/api/health)
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "::error::Main app health check failed with status $http_code"
+            exit 1
+          fi
+
+          status=$(echo "$body" | jq -r '.status')
+          if [ "$status" != "healthy" ]; then
+            echo "::warning::Main app status is $status"
+          fi
+
+      - name: Check WebSocket Server Health
+        id: ws-server
+        run: |
+          response=$(curl -s -w "\n%{http_code}" ${{ secrets.WS_SERVER_URL }}/health)
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "::error::WebSocket server health check failed with status $http_code"
+            exit 1
+          fi
+
+          status=$(echo "$body" | jq -r '.status')
+          if [ "$status" != "healthy" ]; then
+            echo "::warning::WebSocket server status is $status"
+          fi
+
+      - name: Report Success
+        if: success()
+        run: echo "✅ All health checks passed"
+
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "❌ Health check failed"
+          echo "Please check the logs above for details"

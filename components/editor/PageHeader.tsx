@@ -8,7 +8,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2 } from "lucide-react";
+import { Clock, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import * as Y from "yjs";
 
 interface PageHeaderProps {
@@ -17,6 +24,7 @@ interface PageHeaderProps {
   initialIcon?: string | null;
   isEditable: boolean;
   ydoc: Y.Doc | null;
+  onVersionHistoryClick?: () => void;
 }
 
 export function PageHeader({
@@ -25,6 +33,7 @@ export function PageHeader({
   initialIcon,
   isEditable,
   ydoc,
+  onVersionHistoryClick,
 }: PageHeaderProps) {
   const { title, icon, isSaving, updateTitle, updateIcon } = usePageMetadata({
     ydoc,
@@ -103,6 +112,28 @@ export function PageHeader({
             </div>
           )}
         </div>
+
+        {/* Version History Button */}
+        {onVersionHistoryClick && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onVersionHistoryClick}
+                  className="flex-shrink-0"
+                >
+                  <Clock className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Version History</p>
+                <p className="text-xs text-muted-foreground">Ctrl+Shift+H</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import { VersionHistoryPanel } from "@/components/version-history/VersionHistoryPanel";
+
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
 import * as Y from "yjs";
@@ -422,6 +424,7 @@ function CollaborativeEditorInner({
   workspaceId,
   cover,
 }: CollaborativeEditorInnerProps) {
+  const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
@@ -559,6 +562,19 @@ function CollaborativeEditorInner({
     }
   }, [isMobile, mobileView]);
 
+  // Keyboard shortcut for version history (Ctrl+Shift+H)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "H") {
+        e.preventDefault();
+        setVersionHistoryOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   if (!editor) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -609,11 +625,23 @@ function CollaborativeEditorInner({
           initialIcon={initialIcon}
           isEditable={isEditable}
           ydoc={ydoc}
+          onVersionHistoryClick={() => setVersionHistoryOpen(true)}
         />
         <EditorContent
           editor={editor}
           role="presentation"
           className="simple-editor-content"
+        />
+
+        {/* Version History Panel */}
+        <VersionHistoryPanel
+          pageId={pageId}
+          isOpen={versionHistoryOpen}
+          onClose={() => setVersionHistoryOpen(false)}
+          onRestore={() => {
+            // Optionally refresh the page or show a success message
+            window.location.reload();
+          }}
         />
       </EditorContext.Provider>
     </div>

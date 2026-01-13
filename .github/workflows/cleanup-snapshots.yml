@@ -1,0 +1,54 @@
+name: Cleanup Old Snapshots
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC (7:30 AM IST)
+    - cron: "0 2 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  cleanup-snapshots:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Snapshot Cleanup
+        id: cleanup
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST ${{ secrets.MAIN_APP_URL }}/api/cleanup/snapshots)
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "::error::Snapshot cleanup failed with status $http_code"
+            exit 1
+          fi
+
+          # Extract statistics
+          success=$(echo "$body" | jq -r '.success')
+          deleted=$(echo "$body" | jq -r '.deletedCount')
+          preserved=$(echo "$body" | jq -r '.preservedCount')
+          cutoff=$(echo "$body" | jq -r '.cutoffDate')
+
+          if [ "$success" != "true" ]; then
+            error=$(echo "$body" | jq -r '.error')
+            echo "::error::Cleanup failed: $error"
+            exit 1
+          fi
+
+          echo "::notice::Cleanup completed successfully"
+          echo "::notice::Deleted: $deleted snapshots"
+          echo "::notice::Preserved: $preserved snapshots"
+          echo "::notice::Cutoff date: $cutoff"
+
+      - name: Report Success
+        if: success()
+        run: echo "✅ Snapshot cleanup completed successfully"
+
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "❌ Snapshot cleanup failed"
+          echo "Please check the logs above for details"
